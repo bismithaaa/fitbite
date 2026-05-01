@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Appointments - Dietitian Dashboard | FitBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            padding-top: 80px;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 80px);
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar-link i {
+            width: 25px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .sidebar-link:hover {
+            background: #f0f0f0;
+            color: var(--FitBite-green);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(0,177,64,0.1), transparent);
+            color: var(--FitBite-green);
+            border-right: 3px solid var(--FitBite-green);
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px 30px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+        
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--FitBite-green);
+            margin-bottom: 10px;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Appointment Cards */
+        .appointment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--FitBite-green);
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-update-status {
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 12px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        
+        .detail-value {
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .fee-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a href="{% url 'dietitian_dashboard' %}" class="navbar-brand"><h1>FitBite Dietitian</h1></a>
+            <div>
+                <span class="me-3">
+                    <i class="fas fa-user-md"></i> {{ dietitian.name }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_dashboard' %}" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_appointments' %}" class="sidebar-link active">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_payment_report' %}" class="sidebar-link">
+                    <i class="fas fa-file-invoice-dollar"></i> Payment Report
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_messages' %}" class="sidebar-link">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_slots' %}" class="sidebar-link">
+                    <i class="fas fa-clock"></i> Manage Slots
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-calendar-check"></i> Manage Appointments</h2>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>{{ total_count }}</h3>
+                <p>Total Appointments</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hourglass-half"></i>
+                <h3>{{ pending_count }}</h3>
+                <p>Pending</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>{{ confirmed_count }}</h3>
+                <p>Confirmed</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-double"></i>
+                <h3>{{ completed_count }}</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Status</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Appointments</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                        <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ date_filter }}" onchange="this.form.submit()">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{% url 'dietitian_appointments' %}" class="btn btn-secondary d-block">
+                        <i class="fas fa-undo"></i> Clear Filters
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Appointments List -->
+        {% if appointments %}
+            {% for apt in appointments %}
+            <div class="appointment-card">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="detail-label">
+                                    <i class="fas fa-user"></i> Patient Name
+                                </div>
+                                <div class="detail-value">
+                                    <strong>{{ apt.user.name }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-label">
+                                    <i class="fas fa-phone"></i> Contact
+                                </div>
+                                <div class="detail-value">
+                                    {{ apt.user.phone }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-label">
+                                    <i class="fas fa-envelope"></i> Email
+                                </div>
+                                <div class="detail-value">
+                                    {{ apt.user.email }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar-alt"></i> Date
+                                </div>
+                                <div class="detail-value">
+                                    <strong>{{ apt.appointment_date|date:"d M Y" }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="detail-label">
+                                    <i class="fas fa-clock"></i> Time
+                                </div>
+                                <div class="detail-value">
+                                    <strong>{{ apt.appointment_time }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="detail-label">
+                                    <i class="fas fa-tag"></i> Status
+                                </div>
+                                <span class="status-badge status-{{ apt.status }}">
+                                    {{ apt.get_status_display }}
+                                </span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="detail-label">
+                                    <i class="fas fa-credit-card"></i> Payment
+                                </div>
+                                <span class="badge {% if apt.payment_status == 'paid' %}bg-success{% elif apt.payment_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ apt.get_payment_status_display|default:"Pending" }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {% if apt.reason %}
+                        <div class="mb-2">
+                            <div class="detail-label">
+                                <i class="fas fa-comment"></i> Reason for Consultation
+                            </div>
+                            <div class="detail-value">
+                                {{ apt.reason }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if apt.symptoms %}
+                        <div class="mb-2">
+                            <div class="detail-label">
+                                <i class="fas fa-stethoscope"></i> Symptoms
+                            </div>
+                            <div class="detail-value">
+                                {{ apt.symptoms }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="fee-details">
+                            <small class="text-muted">Fees: ₹{{ apt.consultation_fee|default:300 }} + ₹{{ apt.platform_fee|default:50 }} = ₹{{ apt.total_amount|default:350 }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            {% if apt.status == 'pending' %}
+                            <form method="POST" action="{% url 'dietitian_update_appointment' apt.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="confirmed">
+                                <button type="submit" class="btn btn-success btn-update-status w-100 mb-2">
+                                    <i class="fas fa-check-circle"></i> Confirm Appointment
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'dietitian_update_appointment' apt.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="cancelled">
+                                <button type="submit" class="btn btn-danger btn-update-status w-100" onclick="return confirm('Cancel this appointment?')">
+                                    <i class="fas fa-times-circle"></i> Cancel Appointment
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            {% if apt.status == 'confirmed' %}
+                            <form method="POST" action="{% url 'dietitian_update_appointment' apt.id %}" class="mb-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="completed">
+                                <button type="submit" class="btn btn-primary btn-update-status w-100">
+                                    <i class="fas fa-check-double"></i> Mark as Completed
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            <a href="{% url 'dietitian_messages' %}?user_id={{ apt.user.id }}" class="btn btn-info btn-update-status w-100">
+                                <i class="fas fa-envelope"></i> Send Message
+                            </a>
+                            
+                            <button class="btn btn-outline-secondary btn-update-status w-100 mt-2" onclick="showNotesModal({{ apt.id }}, '{{ apt.user.name }}')">
+                                <i class="fas fa-sticky-note"></i> Add Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+            <h3>No Appointments Found</h3>
+            <p class="text-muted">No appointments match your filter criteria</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Notes Modal -->
+    <div class="modal fade" id="notesModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Consultation Notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="" id="notesForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" name="status" value="confirmed">
+                        <p><strong>Patient:</strong> <span id="patientName"></span></p>
+                        <div class="mb-3">
+                            <label class="form-label">Consultation Notes</label>
+                            <textarea name="notes" class="form-control" rows="5" placeholder="Enter consultation notes, recommendations, diet plan, etc..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Notes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showNotesModal(appointmentId, patientName) {
+            const modal = new bootstrap.Modal(document.getElementById('notesModal'));
+            const form = document.getElementById('notesForm');
+            form.action = `/dietitian-update-appointment/${appointmentId}/`;
+            document.getElementById('patientName').textContent = patientName;
+            modal.show();
+        }
+    </script>
+</body>
+</html>

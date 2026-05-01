@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Place Order - FitBite</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body {
+    background: #f6f5f7;
+    font-family: 'Montserrat', sans-serif;
+    padding: 20px;
+}
+
+.order-box {
+    max-width: 700px;
+    margin: auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 30px;
+}
+
+.order-header {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    background: #eee;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group i {
+    color: #4CAF50;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+textarea {
+    resize: none;
+    height: 80px;
+}
+
+.product-preview {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.product-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.confirm-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.confirm-btn:hover {
+    background: #2e7d32;
+}
+</style>
+</head>
+
+<body>
+
+<div class="order-box">
+
+    <div class="order-header">
+        <i class="fas fa-shopping-bag"></i> Confirm Your Order
+    </div>
+
+    <!-- Product preview -->
+    <div class="product-preview">
+        {% if product.image %}
+        <img src="{{ product.image.url }}">
+        {% endif %}
+        <div>
+            <b>{{ product.product_name }}</b><br>
+            ₹{{ product.price }} per day
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <i class="fas fa-calendar-alt"></i>
+            <select name="plan" required>
+                <option value="">Select Plan</option>
+                <option value="single">Single Day</option>
+                <option value="weekly">1 Week Plan</option>
+                <option value="monthly">1 Month Plan</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-clock"></i>
+            <input type="date" name="start_date" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-map-marker-alt"></i>
+            <textarea name="address" placeholder="Delivery Address" required></textarea>
+        </div>
+        <div class="input-group">
+    <input type="text" name="full_name" placeholder="Full Name" required>
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="city" placeholder="City" required>
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="state" placeholder="State" required>
+        </div>
+
+        <div class="input-group">
+            <input type="text" name="pincode" placeholder="Pincode" required>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-phone"></i>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+        </div>
+
+        <button class="confirm-btn">
+            <i class="fas fa-check-circle"></i> Place Order
+        </button>
+    </form>
+
+</div>
+
+</body>
+</html>

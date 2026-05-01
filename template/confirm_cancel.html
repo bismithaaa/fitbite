@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Order - FitBite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .cancel-container {
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .cancel-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .warning-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .warning-icon i {
+            font-size: 70px;
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 20px;
+            border-radius: 50%;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .warning-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .summary-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-title i {
+            color: #4CAF50;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+        
+        .summary-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .refund-info {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .refund-info i {
+            font-size: 30px;
+            color: #4CAF50;
+        }
+        
+        .refund-text h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+        
+        .refund-text p {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .cancel-reason {
+            margin-bottom: 25px;
+        }
+        
+        .cancel-reason label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .cancel-reason select, 
+        .cancel-reason textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .cancel-reason select:focus,
+        .cancel-reason textarea:focus {
+            border-color: #dc3545;
+        }
+        
+        .cancel-reason textarea {
+            height: 100px;
+            resize: none;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .cancel-reason textarea.show {
+            display: block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        @media (max-width: 480px) {
+            .cancel-card {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="cancel-card">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h2>Cancel Order</h2>
+            <p class="warning-text">Are you sure you want to cancel this order? This action cannot be undone.</p>
+            
+            <div class="order-summary">
+                <div class="summary-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    Order Summary
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Order ID:</span>
+                    <span class="summary-value">{{ order.order_id }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Plan:</span>
+                    <span class="summary-value">{{ order.get_plan_display }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Amount:</span>
+                    <span class="summary-value">₹{{ order.total_amount }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Payment:</span>
+                    <span class="summary-value">{{ order.get_payment_status_display }}</span>
+                </div>
+            </div>
+            
+            {% if order.payment_status == 'paid' %}
+            <div class="refund-info">
+                <i class="fas fa-undo-alt"></i>
+                <div class="refund-text">
+                    <h4>Refund Information</h4>
+                    <p>Your payment of ₹{{ order.total_amount }} will be refunded within 5-7 business days.</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="cancel-reason">
+                    <label>Reason for cancellation (optional)</label>
+                    <select id="reasonSelect">
+                        <option value="">Select a reason</option>
+                        <option value="changed_mind">Changed my mind</option>
+                        <option value="wrong_address">Wrong delivery address</option>
+                        <option value="found_cheaper">Found cheaper option</option>
+                        <option value="delayed">Delivery too slow</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <textarea id="otherReason" placeholder="Please specify your reason..."></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Yes, Cancel Order
+                    </button>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Go Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const reasonSelect = document.getElementById('reasonSelect');
+        const otherReason = document.getElementById('otherReason');
+        
+        reasonSelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherReason.classList.add('show');
+            } else {
+                otherReason.classList.remove('show');
+            }
+        });
+        
+        // Before form submit, if "other" is selected, add the reason to a hidden field
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (reasonSelect.value === 'other' && otherReason.value.trim()) {
+                // Create hidden input with the reason
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'cancel_reason';
+                input.value = otherReason.value.trim();
+                this.appendChild(input);
+            } else if (reasonSelect.value) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'cancel_reason';
+                input.value = reasonSelect.options[reasonSelect.selectedIndex].text;
+                this.appendChild(input);
+            }
+        });
+    </script>
+</body>
+</html>

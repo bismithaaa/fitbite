@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - FitBite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .payment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+        
+        .order-info {
+            color: #666;
+            margin: 10px 0;
+        }
+        
+        .razorpay-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .razorpay-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+        }
+        
+        .razorpay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .secure-badge i {
+            color: #4CAF50;
+        }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .back-link:hover {
+            color: #4CAF50;
+        }
+    </style>
+    
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="logo">
+            <h1>Fit<span style="color: #2e7d32;">Bit</span></h1>
+        </div>
+        
+        <div class="payment-details">
+            <h3>Order Summary</h3>
+            <div class="amount">₹{{ amount }}</div>
+            <div class="order-info">
+                <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                <p><strong>Customer:</strong> {{ customer_name }}</p>
+                <p><strong>Email:</strong> {{ customer_email }}</p>
+                <p><strong>Phone:</strong> {{ customer_phone }}</p>
+            </div>
+        </div>
+        
+        <div class="loader" id="loader"></div>
+        <div class="error-message" id="errorMessage"></div>
+        
+        <button class="razorpay-btn" id="payButton" onclick="payNow()">
+            <i class="fas fa-lock"></i> Pay Now ₹{{ amount }}
+        </button>
+        
+        <div class="secure-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secured by Razorpay</span>
+        </div>
+        
+        <a href="{% url 'view_cart' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Cart
+        </a>
+    </div>
+
+    <script>
+        function payNow() {
+            // Disable button and show loader
+            const payButton = document.getElementById('payButton');
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            payButton.disabled = true;
+            loader.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            // Razorpay options
+            var options = {
+                "key": "{{ razorpay_key }}",
+                "amount": "{{ amount_paise }}",
+                "currency": "INR",
+                "name": "FitBite",
+                "description": "Payment for Order #{{ order.order_id }}",
+                "image": "https://your-logo-url.com/logo.png", // Add your logo URL
+                "order_id": "{{ razorpay_order_id }}",
+                "handler": function (response) {
+                    // On successful payment
+                    window.location.href = "{% url 'payment_success' %}?razorpay_payment_id=" + response.razorpay_payment_id + 
+                                          "&razorpay_order_id=" + response.razorpay_order_id + 
+                                          "&razorpay_signature=" + response.razorpay_signature;
+                },
+                "prefill": {
+                    "name": "{{ customer_name }}",
+                    "email": "{{ customer_email }}",
+                    "contact": "{{ customer_phone }}"
+                },
+                "notes": {
+                    "address": "{{ order.address }}"
+                },
+                "theme": {
+                    "color": "#4CAF50"
+                },
+                "modal": {
+                    "ondismiss": function() {
+                        // When payment modal is closed without payment
+                        payButton.disabled = false;
+                        loader.style.display = 'none';
+                        errorMessage.style.display = 'block';
+                        errorMessage.innerHTML = 'Payment cancelled. Please try again.';
+                    }
+                }
+            };
+            
+            // Initialize Razorpay
+            var razorpay = new Razorpay(options);
+            
+            // Open Razorpay checkout
+            razorpay.open();
+            
+            // Handle payment failure
+            razorpay.on('payment.failed', function (response) {
+                payButton.disabled = false;
+                loader.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorMessage.innerHTML = 'Payment failed: ' + response.error.description;
+                
+                // Redirect to failure page
+                window.location.href = "{% url 'payment_failure' %}?order_id={{ order.id }}";
+            });
+        }
+        
+        // Auto-open Razorpay when page loads (optional)
+        window.onload = function() {
+            // Uncomment below line if you want auto-open
+            // setTimeout(payNow, 500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers - FitBite Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+            --healthy-green: #4CAF50;
+            --fresh-blue: #2196F3;
+            --vital-orange: #FF9800;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f4f6f9;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--FitBite-dark), #2d2d2d);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-src {
+            background: url('https://cdn.logojoy.com/wp-content/uploads/20230621140452/FitBite-logo.png') no-repeat center;
+            background-size: contain;
+            width: 120px;
+            height: 40px;
+            filter: brightness(0) invert(1);
+        }
+
+        .hamburger {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            display: none;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .notification-badge {
+            position: relative;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .user-info h6 {
+            font-size: 14px;
+            margin: 0;
+            color: white;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            margin: 0;
+            opacity: 0.8;
+            color: #ecf0f1;
+        }
+
+        /* Sidebar Styles */
+        .app-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #2c3e50;
+            color: white;
+            z-index: 1001;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--FitBite-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .seller-details h6 {
+            margin: 0;
+            font-size: 16px;
+            color: white;
+        }
+
+        .seller-details p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.8;
+            color: #ecf0f1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-heading {
+            padding: 15px 25px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #95a5a6;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 12px 25px;
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--FitBite-green);
+        }
+
+        .menu-item.active {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: var(--FitBite-green);
+        }
+
+        .menu-item i {
+            width: 20px;
+            font-size: 16px;
+        }
+
+        .badge {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .badge-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .badge-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+            background: #f4f6f9;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+
+        .page-header h1 i {
+            color: var(--FitBite-green);
+            margin-right: 10px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-badge i {
+            color: var(--FitBite-green);
+            font-size: 20px;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--FitBite-green);
+        }
+
+        .btn-filter {
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-filter:hover {
+            background: #009933;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-reset:hover {
+            background: #e9ecef;
+        }
+
+        /* Search Box */
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+
+        .search-box i {
+            color: #999;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .table-header h5 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .table-header h5 i {
+            color: var(--FitBite-green);
+            margin-right: 8px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 15px 10px;
+            color: #7f8c8d;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #2c3e50;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .user-avatar-sm {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--FitBite-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-inactive { background: #f8d7da; color: #721c24; }
+
+        .btn-view {
+            padding: 5px 12px;
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view:hover {
+            background: #009933;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .page-link {
+            padding: 8px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .page-link:hover {
+            background: var(--FitBite-green);
+            color: white;
+            border-color: var(--FitBite-green);
+        }
+
+        .page-link.active {
+            background: var(--FitBite-green);
+            color: white;
+            border-color: var(--FitBite-green);
+        }
+
+        /* Footer */
+        .app-footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .app-header {
+                left: 80px;
+            }
+            
+            .app-sidebar {
+                width: 80px;
+            }
+            
+            .sidebar-header .seller-details,
+            .menu-item span,
+            .menu-heading {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                left: 0;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .app-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .app-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .filter-form {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .header-stats {
+                width: 100%;
+            }
+            
+            .stat-badge {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .table {
+                font-size: 14px;
+            }
+        }
+
+        /* Background Colors */
+        .bg-FitBite-green { background: linear-gradient(135deg, var(--FitBite-green), #009933); }
+        .bg-healthy-green { background: linear-gradient(135deg, var(--healthy-green), #45a049); }
+        .bg-fresh-blue { background: linear-gradient(135deg, var(--fresh-blue), #0d8bf2); }
+        .bg-vital-orange { background: linear-gradient(135deg, var(--vital-orange), #e68a00); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-logo">
+            <button class="hamburger" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-src"></div>
+        </div>
+        
+        <div class="header-right">
+            <div class="notification-badge">
+                <i class="fas fa-bell fa-lg"></i>
+                {% if pending_orders %}
+                <span class="badge-count">{{ pending_orders }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="user-menu">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-info">
+                    <h6>Admin User</h6>
+                    <p>{{ request.session.admin|default:"admin@FitBite.com" }}</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="app-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="seller-info">
+                <div class="seller-avatar">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="seller-details">
+                    <h6>Admin Panel</h6>
+                    <p>Super Admin</p>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-heading">DASHBOARD</li>
+            <li><a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-home"></i> <span>Overview</span></a></li>
+            
+            <li class="menu-heading">SELLER MANAGEMENT</li>
+            <li><a href="{% url 'admin_pending_sellers' %}" class="menu-item">
+                <i class="fas fa-store"></i> <span>Seller Verification</span>
+                {% if pending_sellers %}
+                <span class="badge badge-warning">{{ pending_sellers }}</span>
+                {% endif %}
+            </a></li>
+            <li><a href="{% url 'admin_sellers' %}" class="menu-item">
+                <i class="fas fa-users"></i> <span>All Sellers</span>
+                <span class="badge badge-info">{{ total_sellers }}</span>
+            </a></li>
+
+            <li><a href="{% url 'admin_revenue' %}" class="menu-item">
+                <i class="fas fa-dollar-sign"></i> <span>Revenue</span>
+            </a></li>
+            <li><a href="{% url 'admin_feedback' %}" class="menu-item">
+                <i class="fas fa-comment"></i> <span>Feedback</span>
+            </a></li>
+            
+            <li class="menu-heading">ORDERS & CUSTOMERS</li>
+            <li><a href="{% url 'admin_orders' %}" class="menu-item"><i class="fas fa-shopping-cart"></i> <span>Orders</span>
+                {% if pending_orders %}<span class="badge badge-danger">{{ pending_orders }}</span>{% endif %}
+            </a></li>
+            <li><a href="{% url 'admin_users' %}" class="menu-item active"><i class="fas fa-users"></i> <span>Customers</span>
+                <span class="badge badge-info">{{ total_users }}</span>
+            </a></li>
+            
+            <li class="menu-heading">SETTINGS</li>
+            <li><a href="{% url 'admin_logout' %}" class="menu-item"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-users"></i> Manage Customers</h1>
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <i class="fas fa-user"></i>
+                    <div>
+                        <strong>{{ total_users|default:users|length }}</strong>
+                        <small>Total Customers</small>
+                    </div>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-calendar"></i>
+                    <div>
+                        <strong>{% now "d M Y" %}</strong>
+                        <small>Current Date</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <form method="GET" class="filter-form">
+                <div class="filter-group">
+                    <label><i class="fas fa-search"></i> Search</label>
+                    <input type="text" name="search" placeholder="Name, email, phone..." value="{{ search_query }}">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar"></i> Joined Date</label>
+                    <select name="date_filter">
+                        <option value="all" {% if date_filter == 'all' %}selected{% endif %}>All Time</option>
+                        <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today</option>
+                        <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Last 7 Days</option>
+                        <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Last 30 Days</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <div>
+                        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> Apply Filters</button>
+                        <a href="{% url 'admin_users' %}" class="btn-reset"><i class="fas fa-undo"></i> Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Search -->
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Quick search by name, email or phone..." onkeyup="quickSearch()">
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5><i class="fas fa-list"></i> Customer List</h5>
+                <span class="badge bg-info">{{ users|length }} customers</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                          
+                        </thead>
+                    <tbody>
+                        {% for customer in users %}
+                        <tr>
+                            <td>#{{ customer.id }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="user-avatar-sm">
+                                        {{ customer.name|first|upper }}
+                                    </div>
+                                    <div><strong>{{ customer.name }}</strong></div>
+                                </div>
+                            </td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.phone }}</td>
+                            <td>{{ customer.address|truncatechars:30|default:"N/A" }}</td>
+                            <td>{{ customer.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <span class="badge-status badge-active">
+                                    <i class="fas fa-check-circle"></i> Active
+                                </span>
+                            </td>
+                            
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h3>No Customers Found</h3>
+                                    <p>There are no customers matching your filters.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if users.has_other_pages %}
+            <div class="pagination">
+                {% if users.has_previous %}
+                <a href="?page={{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}" class="page-link">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+                {% endif %}
+
+                {% for i in users.paginator.page_range %}
+                    {% if users.number == i %}
+                    <span class="page-link active">{{ i }}</span>
+                    {% else %}
+                    <a href="?page={{ i }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}" class="page-link">{{ i }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if users.has_next %}
+                <a href="?page={{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}" class="page-link">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div>© 2024 FitBite Healthy Meals. All rights reserved.</div>
+            <div>Made with <i class="fas fa-heart text-danger"></i> for healthy living</div>
+        </footer>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        // Quick search functionality (client-side)
+        function quickSearch() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('usersTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const name = row.cells[1]?.textContent.toLowerCase() || '';
+                const email = row.cells[2]?.textContent.toLowerCase() || '';
+                const phone = row.cells[3]?.textContent.toLowerCase() || '';
+                
+                if (name.includes(filter) || email.includes(filter) || phone.includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        // Close sidebar when clicking outside on mobile
+        $(document).on('click', function(e) {
+            if ($(window).width() <= 768) {
+                if (!$(e.target).closest('.app-sidebar').length && !$(e.target).closest('#menuToggle').length) {
+                    $('#sidebar').removeClass('open');
+                }
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.app-header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.2)';
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

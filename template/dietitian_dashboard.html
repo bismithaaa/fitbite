@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dietitian Dashboard - FitBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            padding-top: 80px;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 80px);
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar-link i {
+            width: 25px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .sidebar-link:hover {
+            background: #f0f0f0;
+            color: var(--FitBite-green);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(0,177,64,0.1), transparent);
+            color: var(--FitBite-green);
+            border-right: 3px solid var(--FitBite-green);
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px 30px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+        
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--FitBite-green);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--FitBite-green);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        /* Table Cards */
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .table-card h5 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            color: #2c3e50;
+        }
+        
+        .table-card h5 i {
+            color: var(--FitBite-green);
+            margin-right: 8px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            text-align: left;
+            padding: 12px;
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .slot-available {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .slot-booked {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .btn-sm-custom {
+            padding: 4px 12px;
+            font-size: 12px;
+            border-radius: 15px;
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--FitBite-green), #2e7d32);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-banner h2 {
+            margin-bottom: 5px;
+        }
+        
+        .welcome-banner p {
+            margin-bottom: 0;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 1000;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a href="{% url 'dietitian_dashboard' %}" class="navbar-brand">
+                <h1>Fit<span style="color: var(--FitBite-green);">Bit</span> Dietitian</h1>
+            </a>
+            <div>
+                <span class="me-3">
+                    <i class="fas fa-user-md"></i> {{ dietitian.name }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_dashboard' %}" class="sidebar-link active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_appointments' %}" class="sidebar-link">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+            </li>
+             <li class="sidebar-item">
+                <a href="{% url 'dietitian_payment_report' %}" class="sidebar-link">
+                    <i class="fas fa-file-invoice-dollar"></i> Payment Report
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_messages' %}" class="sidebar-link">
+                    <i class="fas fa-envelope"></i> Messages
+                    {% if unread_messages > 0 %}
+                    <span class="badge bg-danger ms-2">{{ unread_messages }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_slots' %}" class="sidebar-link">
+                    <i class="fas fa-clock"></i> Manage Slots
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2><i class="fas fa-waveform"></i> Welcome back, {{ dietitian.name }}!</h2>
+            <p>Here's what's happening with your practice today</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ pending_appointments }}</div>
+                <div class="stat-label">
+                    <i class="fas fa-hourglass-half"></i> Pending Appointments
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ today_appointments }}</div>
+                <div class="stat-label">
+                    <i class="fas fa-calendar-day"></i> Today's Appointments
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_appointments }}</div>
+                <div class="stat-label">
+                    <i class="fas fa-calendar-alt"></i> Total Appointments
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ unread_messages }}</div>
+                <div class="stat-label">
+                    <i class="fas fa-envelope"></i> Unread Messages
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Slots -->
+        <div class="table-card">
+            <h5><i class="fas fa-clock"></i> Today's Slots</h5>
+            <div class="row g-2">
+                {% for slot in today_slots %}
+                <div class="col-md-2 col-4">
+                    <div class="{% if slot.is_booked %}slot-booked{% else %}slot-available{% endif %}">
+                        <i class="fas fa-clock"></i> {{ slot.get_slot_time_display }}
+                        {% if slot.is_booked %}
+                        <br><small><i class="fas fa-user-check"></i> Booked</small>
+                        {% else %}
+                        <br><small><i class="fas fa-check-circle"></i> Available</small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center text-muted py-3">
+                    <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                    <p>No slots scheduled for today</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments -->
+        <div class="table-card">
+            <h5><i class="fas fa-calendar-alt"></i> Upcoming Appointments</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar-day"></i> Date</th>
+                            <th><i class="fas fa-clock"></i> Time</th>
+                            <th><i class="fas fa-user"></i> Patient</th>
+                            <th><i class="fas fa-comment"></i> Reason</th>
+                            <th><i class="fas fa-tag"></i> Status</th>
+                            <th><i class="fas fa-cog"></i> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apt in upcoming_appointments %}
+                        <tr>
+                            <td>{{ apt.appointment_date|date:"d M Y" }}</td>
+                            <td>{{ apt.appointment_time }}</td>
+                            <td>
+                                <strong>{{ apt.user.name }}</strong><br>
+                                <small class="text-muted">{{ apt.user.email }}</small>
+                            </td>
+                            <td>{{ apt.reason|truncatechars:40 }}</td>
+                            <td>
+                                <span class="status-badge status-{{ apt.status }}">
+                                    {{ apt.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'dietitian_update_appointment' apt.id %}" class="btn btn-success btn-sm-custom">
+                                    <i class="fas fa-edit"></i> Update
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                                <p>No upcoming appointments</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Messages -->
+        <div class="table-card">
+            <h5><i class="fas fa-comment-dots"></i> Recent Messages</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user"></i> From</th>
+                            <th><i class="fas fa-envelope"></i> Message</th>
+                            <th><i class="fas fa-calendar"></i> Date</th>
+                            <th><i class="fas fa-reply"></i> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in recent_messages %}
+                        <tr>
+                            <td>
+                                <strong>{{ msg.user.name }}</strong><br>
+                                <small class="text-muted">{{ msg.user.email }}</small>
+                            </td>
+                            <td>{{ msg.message|truncatechars:60 }}</td>
+                            <td>{{ msg.created_at|date:"d M Y, h:i A" }}</td>
+                            <td>
+                                <a href="{% url 'dietitian_messages' %}?user_id={{ msg.user.id }}" class="btn btn-primary btn-sm-custom">
+                                    <i class="fas fa-reply"></i> Reply
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No messages yet</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        const toggleBtn = document.createElement('button');
+        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        toggleBtn.className = 'btn btn-success position-fixed top-0 start-0 m-2 d-md-none';
+        toggleBtn.style.zIndex = '1001';
+        toggleBtn.style.borderRadius = '50%';
+        toggleBtn.style.width = '45px';
+        toggleBtn.style.height = '45px';
+        toggleBtn.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+        document.body.appendChild(toggleBtn);
+        
+        // Auto-refresh unread messages count every 30 seconds
+        setInterval(function() {
+            fetch('/get-dietitian-unread-count/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.unread_count > 0) {
+                        const badge = document.querySelector('#unreadBadge');
+                        if (badge) {
+                            badge.textContent = data.unread_count;
+                            badge.style.display = 'inline-block';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }, 30000);
+    </script>
+</body>
+</html>

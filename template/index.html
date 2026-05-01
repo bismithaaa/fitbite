@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <title>FitBite - Healthy Meals & Nutrition</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="description" content="FitBite - Your partner in healthy living with nutritious meals, diet plans, and wellness tips">
+
+    <!-- Favicon -->
+    <link href="{% static 'img/favicon.ico' %}" rel="icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2e7d32;
+            --dark-color: #2C3E50;
+            --light-color: #F8F9FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            padding-top: 70px;
+            background: var(--light-color);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 0.5rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+
+        .navbar-brand h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .user-welcome {
+            background: #f0f0f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+        
+        .cart-icon {
+            position: relative;
+            font-size: 1.1rem;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-btn {
+            background: #ff6b6b;
+            color: white !important;
+            padding: 0.3rem 1rem !important;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+        
+        .btn-signup {
+            background: var(--primary-color);
+            color: white !important;
+            padding: 0.3rem 1.2rem !important;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            height: calc(100vh - 70px);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-slider {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.4));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .slider-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .slider-control.prev { left: 20px; }
+        .slider-control.next { right: 20px; }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /* Sections */
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .section-title p {
+            color: #666;
+            max-width: 600px;
+            margin: 10px auto 0;
+        }
+
+        /* Plan Cards */
+        .plan-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .plan-header {
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+        }
+
+        .bg-gradient-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #FF6B6B, #4CAF50); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #4CAF50, #2e7d32); }
+
+        .plan-features {
+            padding: 1.5rem;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .plan-features i {
+            color: var(--primary-color);
+        }
+
+        .plan-footer {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .btn-plan, .btn-outline-success {
+            width: 100%;
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-plan {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-outline-success {
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Product Cards */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(76,175,80,0.15);
+        }
+
+        .product-image {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .nutrition-info {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .nutrition-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .nutrition-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .nutrition-label {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .add-to-cart {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background: #2e7d32;
+            transform: scale(1.05);
+        }
+
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 6px 18px;
+            border: 2px solid var(--primary-color);
+            border-radius: 30px;
+            background: transparent;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .cart-sidebar.open { right: 0; }
+        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+        }
+        
+        .cart-overlay.active { display: block; }
+
+        .cart-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .cart-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .cart-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .cart-quantity-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cart-quantity-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .cart-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer a {
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10001;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .menu-toggle { display: block; }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active { display: flex; }
+            .hero-content h1 { font-size: 2rem; }
+            .cart-sidebar { width: 100%; right: -100%; }
+        }
+
+        @media (max-width: 576px) {
+            .hero-content h1 { font-size: 1.5rem; }
+            .slider-control { display: none; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand"><h1>FitBite</h1></a>
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#products" class="nav-link">Products</a></li>
+                <li><a href="#plans" class="nav-link">Plans</a></li>
+                <li><a href="{% url 'opensearch' %}" class="nav-link">AI Search</a></li>
+                
+                {% if user %}
+                <li class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Dietitians</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'get_dietitians' %}">View All</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_appointments' %}">Appointments</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_messages' %}">Messages</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'order_history' %}" class="nav-link">Orders</a></li>
+                <li><a href="#" class="cart-icon" id="cartToggle"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a></li>
+                <li><div class="user-welcome"><i class="fas fa-user"></i> {{ user.name|truncatechars:12 }}</div></li>
+                <li><a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                <li><a href="{% url 'register' %}" class="btn-signup">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="d-flex justify-content-between align-items-center pb-3 border-bottom">
+            <h5><i class="fas fa-shopping-cart"></i> Your Cart</h5>
+            <button class="btn-close" id="closeCart"></button>
+        </div>
+        <div id="cartItemsList" class="mt-3">
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                <p>Your cart is empty</p>
+            </div>
+        </div>
+        <div id="cartTotalSection" style="display: none;" class="mt-3 pt-3 border-top">
+            <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal:</span>
+                <span id="cartSubtotal">₹0</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Platform Fee:</span>
+                <span>₹50</span>
+            </div>
+            <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
+                <span>Total:</span>
+                <span id="cartTotal" class="text-success">₹50</span>
+            </div>
+            <a href="/cart/" class="btn btn-outline-success w-100 mt-3">
+                <i class="fas fa-eye"></i> View Cart
+            </a>
+            <a href="/checkout/" class="btn btn-success w-100 mt-2">
+                <i class="fas fa-credit-card"></i> Checkout
+            </a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="hero-slider">
+            <div class="slide active" style="background-image: url('{% static 'img/h1.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>Fresh & Healthy<br>Meals Delivered Daily</h1>
+                        <p>Discover delicious, nutritious meals crafted by experts</p>
+                        <a href="#products" class="btn btn-success px-4 py-2 rounded-pill">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{% static 'img/h2.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>Organic & Natural<br>Ingredients Only</h1>
+                        <p>100% organic ingredients sourced from local farms</p>
+                        <a href="#products" class="btn btn-success px-4 py-2 rounded-pill">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('{% static 'img/h3.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <h1>Meals Designed For<br>Your Fitness Goals</h1>
+                        <p>Weight loss, muscle gain, or maintenance - we have you covered</p>
+                        <a href="#plans" class="btn btn-success px-4 py-2 rounded-pill">View Plans</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="slider-control prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-control next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="slider-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </section>
+
+    <!-- Meal Plans -->
+    <section id="plans" class="container py-5">
+        <div class="section-title">
+            <h2>Meal Plans</h2>
+            <p>Choose the plan that works for you</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="plan-card">
+                    <div class="plan-header bg-gradient-1"><i class="fas fa-sun fa-2x"></i><h3 class="mt-2">Single Day</h3></div>
+                    <div class="plan-features"><ul class="list-unstyled"><li><i class="fas fa-check-circle"></i> Fresh meals</li><li><i class="fas fa-check-circle"></i> Free delivery</li><li><i class="fas fa-check-circle"></i> No commitment</li></ul></div>
+                    <div class="plan-footer"><button class="btn-outline-success" onclick="selectPlan('single')">Choose Plan</button></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="plan-card position-relative">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-header bg-gradient-2"><i class="fas fa-calendar-week fa-2x"></i><h3 class="mt-2">Weekly Plan</h3></div>
+                    <div class="plan-features"><ul class="list-unstyled"><li><i class="fas fa-check-circle"></i> 7 days meals</li><li><i class="fas fa-check-circle"></i> Personalized menu</li><li><i class="fas fa-check-circle"></i> Free delivery</li></ul></div>
+                    <div class="plan-footer"><button class="btn-plan" onclick="selectPlan('weekly')">Choose Plan</button></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="plan-card">
+                    <div class="plan-header bg-gradient-3"><i class="fas fa-calendar-alt fa-2x"></i><h3 class="mt-2">Monthly Plan</h3></div>
+                    <div class="plan-features"><ul class="list-unstyled"><li><i class="fas fa-check-circle"></i> 30 days meals</li><li><i class="fas fa-check-circle"></i> Priority support</li><li><i class="fas fa-check-circle"></i> Best value</li></ul></div>
+                    <div class="plan-footer"><button class="btn-outline-success" onclick="selectPlan('monthly')">Choose Plan</button></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="products-section py-5 bg-white">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Products</h2>
+                <p>Fresh, organic, and nutritious options</p>
+            </div>
+            <div class="category-filters">
+                <button class="category-btn active" onclick="filterProducts('all')">All</button>
+                {% for category in categories %}
+                <button class="category-btn" onclick="filterProducts('{{ category|lower }}')">{{ category }}</button>
+                {% endfor %}
+            </div>
+            <div class="products-grid" id="productsGrid">
+                {% for product in products %}
+                <div class="product-card" data-category="{{ product.category|lower }}" data-product-id="{{ product.id }}">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No image">
+                        {% endif %}
+                        <div class="product-badge">{{ product.category }}</div>
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.product_name }}</h3>
+                        <div class="nutrition-info">
+                            <div class="nutrition-item"><div class="nutrition-value">{{ product.calories|default:"0" }}</div><div class="nutrition-label">kcal</div></div>
+                            <div class="nutrition-item"><div class="nutrition-value">{{ product.protein|default:"0" }}g</div><div class="nutrition-label">Protein</div></div>
+                            <div class="nutrition-item"><div class="nutrition-value">{{ product.carbs|default:"0" }}g</div><div class="nutrition-label">Carbs</div></div>
+                            <div class="nutrition-item"><div class="nutrition-value">{{ product.fat|default:"0" }}g</div><div class="nutrition-label">Fat</div></div>
+                        </div>
+                        <div class="price-section">
+                            <span class="price">₹{{ product.price }}</span>
+                            {% if user %}
+                            <button class="add-to-cart" onclick="addToCart({{ product.id }})">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="add-to-cart">Login to Buy</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-3x text-muted"></i>
+                    <p>No products available</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>FitBite</h5>
+                    <p>Your partner in healthy living. Fresh, organic food delivered.</p>
+                </div>
+                <div class="col-md-2">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home" class="text-white-50">Home</a></li>
+                        <li><a href="#products" class="text-white-50">Products</a></li>
+                        <li><a href="#plans" class="text-white-50">Plans</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" onclick="filterProducts('vegetable')" class="text-white-50">Vegetables</a></li>
+                        <li><a href="#" onclick="filterProducts('fruit')" class="text-white-50">Fruits</a></li>
+                        <li><a href="#" onclick="filterProducts('protein')" class="text-white-50">Proteins</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white-50"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-white-50"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-white-50"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary mt-3">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 FitBite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Slideshow
+        let slideIndex = 1, slideInterval;
+        const slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.dot');
+        
+        function showSlide(n) {
+            if (n > slides.length) slideIndex = 1;
+            if (n < 1) slideIndex = slides.length;
+            slides.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            if (slides[slideIndex-1]) slides[slideIndex-1].classList.add('active');
+            if (dots[slideIndex-1]) dots[slideIndex-1].classList.add('active');
+        }
+        
+        function changeSlide(n) { 
+            clearInterval(slideInterval); 
+            slideIndex += n; 
+            showSlide(slideIndex); 
+            startSlideshow(); 
+        }
+        
+        function startSlideshow() { 
+            slideInterval = setInterval(() => { 
+                slideIndex++; 
+                showSlide(slideIndex); 
+            }, 5000); 
+        }
+        
+        // Get CSRF Token
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Add to Cart
+        function addToCart(productId) {
+            {% if user %}
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            
+            fetch('/add-to-cart/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `product_id=${productId}&quantity=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    document.getElementById('cartCount').innerText = data.cart_count;
+                } else {
+                    showNotification(data.error || 'Error adding to cart', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Network error. Please try again.', 'error');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+            {% else %}
+            window.location.href = '{% url "login" %}';
+            {% endif %}
+        }
+        
+        // Load Cart Count
+        function loadCartCount() {
+            fetch('/get-cart-count/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.count !== undefined) {
+                    document.getElementById('cartCount').innerText = data.count;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        // Load Cart Items
+        function loadCartItems() {
+            fetch('/cart-data/')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('cartItemsList');
+                const totalSection = document.getElementById('cartTotalSection');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `
+                            <div class="cart-item" data-cart-id="${item.id}">
+                                <img src="${item.image}" class="cart-item-img" alt="${item.name}">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-name">${escapeHtml(item.name)}</div>
+                                    <div class="cart-item-price">₹${item.price}</div>
+                                    <div class="cart-quantity">
+                                        <button class="cart-quantity-btn" onclick="updateCartItem(${item.id}, 'decrease', this)">-</button>
+                                        <span class="cart-qty">${item.quantity}</span>
+                                        <button class="cart-quantity-btn" onclick="updateCartItem(${item.id}, 'increase', this)">+</button>
+                                        <button class="cart-remove" onclick="updateCartItem(${item.id}, 'remove', this)">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                    document.getElementById('cartSubtotal').innerText = `₹${data.subtotal}`;
+                    document.getElementById('cartTotal').innerText = `₹${data.total}`;
+                    totalSection.style.display = 'block';
+                } else {
+                    container.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-shopping-cart fa-2x mb-2"></i><p>Your cart is empty</p></div>';
+                    totalSection.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('cartItemsList').innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-exclamation-circle fa-2x mb-2"></i><p>Error loading cart</p></div>';
+            });
+        }
+        
+        // Update Cart Item
+        function updateCartItem(cartId, action, btnElement) {
+            fetch('/update-cart/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `cart_id=${cartId}&action=${action}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('cartCount').innerText = data.cart_count;
+                    showNotification(data.message, 'success');
+                    loadCartItems(); // Refresh cart display
+                } else {
+                    showNotification(data.error || 'Error updating cart', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Network error. Please try again.', 'error');
+            });
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Show Notification
+        function showNotification(message, type = 'success') {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(n => n.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.background = type === 'success' ? '#4CAF50' : '#ff6b6b';
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Filter Products
+        function filterProducts(category) {
+            const products = document.querySelectorAll('.product-card');
+            products.forEach(product => {
+                const productCategory = product.dataset.category;
+                if (category === 'all' || productCategory === category) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === 'All')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Select Plan
+        function selectPlan(plan) {
+            showNotification(`${plan.charAt(0).toUpperCase() + plan.slice(1)} plan selected! Please login to continue.`, 'success');
+            setTimeout(() => {
+                window.location.href = '{% url "login" %}';
+            }, 1500);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(slideIndex);
+            startSlideshow();
+            loadCartCount();
+            
+            // Cart Toggle
+            const cartToggle = document.getElementById('cartToggle');
+            const cartSidebar = document.getElementById('cartSidebar');
+            const cartOverlay = document.getElementById('cartOverlay');
+            const closeCart = document.getElementById('closeCart');
+            
+            if (cartToggle) {
+                cartToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    cartSidebar.classList.add('open');
+                    cartOverlay.classList.add('active');
+                    loadCartItems();
+                });
+            }
+            
+            if (closeCart) {
+                closeCart.addEventListener('click', () => {
+                    cartSidebar.classList.remove('open');
+                    cartOverlay.classList.remove('active');
+                });
+            }
+            
+            if (cartOverlay) {
+                cartOverlay.addEventListener('click', () => {
+                    cartSidebar.classList.remove('open');
+                    cartOverlay.classList.remove('active');
+                });
+            }
+            
+            // Mobile Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

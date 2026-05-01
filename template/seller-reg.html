@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Registration | FreshBite</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Healthy Food Theme */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5fdf4 0%, #e8f5e9 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 20px;
+      margin: 0;
+      padding-top: 80px; /* Space for fixed navbar */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      padding: 0.8rem 0;
+      z-index: 9999;
+    }
+
+    .navbar .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      text-decoration: none;
+    }
+
+    .navbar-brand h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .navbar-brand .text-primary {
+      color: #4CAF50;
+    }
+
+    .navbar-brand .text-success {
+      color: #2e7d32;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 2rem;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link {
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0;
+    }
+
+    .nav-link:hover {
+      color: #4CAF50;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #4CAF50;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-link.active {
+      color: #4CAF50;
+      font-weight: 600;
+    }
+
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .seller-badge {
+      background: linear-gradient(135deg, #4CAF50, #2e7d32);
+      color: white !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .seller-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+      color: white !important;
+    }
+
+    .seller-badge::after {
+      display: none;
+    }
+
+    .seller-badge i {
+      font-size: 14px;
+    }
+
+    /* Mobile menu button */
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      color: #333;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      color: #4CAF50;
+    }
+
+    /* Responsive Navbar */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 70px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 1rem 0;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        flex-direction: column;
+        gap: 0;
+        align-items: center;
+      }
+
+      .nav-menu.active {
+        display: flex;
+      }
+
+      .nav-item {
+        width: 100%;
+        text-align: center;
+      }
+
+      .nav-link {
+        display: block;
+        padding: 1rem;
+      }
+
+      .nav-link::after {
+        display: none;
+      }
+
+      .nav-link:hover {
+        background: #f6f5f7;
+      }
+
+      .seller-badge {
+        justify-content: center;
+        margin: 0.5rem 1rem;
+      }
+    }
+
+    /* Background Shapes (Food Icons) */
+    .bg-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .shape {
+      position: absolute;
+      background-color: rgba(76, 175, 80, 0.1);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      color: #4caf50;
+    }
+
+    .shape1 {
+      width: 80px;
+      height: 80px;
+      top: 10%;
+      left: 5%;
+      animation: float 20s infinite linear;
+    }
+
+    .shape2 {
+      width: 120px;
+      height: 120px;
+      top: 70%;
+      right: 8%;
+      animation: float 25s infinite linear reverse;
+    }
+
+    .shape3 {
+      width: 60px;
+      height: 60px;
+      top: 20%;
+      right: 15%;
+      animation: float 15s infinite linear;
+    }
+
+    .shape4 {
+      width: 90px;
+      height: 90px;
+      bottom: 10%;
+      left: 10%;
+      animation: float 30s infinite linear reverse;
+    }
+
+    .shape5 {
+      width: 70px;
+      height: 70px;
+      top: 80%;
+      left: 20%;
+      animation: float 22s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+
+      100% {
+        transform: translateY(0) rotate(360deg);
+      }
+    }
+
+    /* Registration Card */
+    .register-card {
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      animation: fadeUp 0.8s ease;
+    }
+
+    /* Card Header with Healthy Food Pattern */
+    .register-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(to right, #43a047, #66bb6a, #81c784);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Healthy Food Title */
+    .title-gradient {
+      background: linear-gradient(90deg, #43a047, #66bb6a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: bold;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .logo i {
+      font-size: 2.2rem;
+      color: #43a047;
+    }
+
+    .logo h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2e7d32;
+    }
+
+    /* Subtitle */
+    .subtitle {
+      color: #666;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    /* Form Elements */
+    .form-control {
+      border-radius: 50px;
+      border: 1px solid #e0e0e0;
+      padding: 12px 20px;
+      transition: all 0.3s;
+      background-color: #f9f9f9;
+    }
+
+    .form-control:focus {
+      border-color: #4caf50;
+      box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+      background-color: #fff;
+    }
+
+    textarea.form-control {
+      border-radius: 15px;
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Input Groups with Icons */
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4caf50;
+      z-index: 4;
+    }
+
+    .input-group .form-control {
+      padding-left: 45px;
+    }
+
+    textarea.form-control+i {
+      top: 20px;
+    }
+
+    /* Healthy Button */
+    .btn-healthy {
+      background: linear-gradient(to right, #43a047, #66bb6a);
+      color: #ffffff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn-healthy:hover {
+      background: linear-gradient(to right, #388e3c, #4caf50);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-healthy:active {
+      transform: translateY(-1px);
+    }
+
+    /* Link Styling */
+    .healthy-link {
+      color: #43a047;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .healthy-link:hover {
+      color: #2e7d32;
+      text-decoration: underline;
+    }
+
+    /* Healthy Features (Side Info) */
+    .healthy-features {
+      background: linear-gradient(to bottom, #43a047, #66bb6a);
+      border-radius: 15px;
+      padding: 25px;
+      color: white;
+      height: 100%;
+    }
+
+    .healthy-features h4 {
+      color: white;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .feature-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .feature-item i {
+      font-size: 1.2rem;
+      width: 30px;
+    }
+
+    /* Success Message */
+    .success-message {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      background: linear-gradient(to right, #43a047, #66bb6a);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.5s ease;
+      max-width: 300px;
+      display: none;
+    }
+
+    /* Pulse Animation */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .healthy-features {
+        margin-top: 30px;
+      }
+
+      .shape {
+        display: none;
+      }
+      
+      .success-message {
+        top: 80px;
+        left: 20px;
+        right: 20px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {% if messages %}
+  <script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+  </script>
+  {% endif %}
+
+  <!-- Navbar Start -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="navbar-brand">
+        <h1>
+          <span class="text-primary">Fit</span><span class="text-success">Bit</span>
+        </h1>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="/" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'log' %}" class="nav-link seller-badge active">
+            <i class="fas fa-store"></i> User Registeration
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!-- Navbar End -->
+
+  <!-- Background Elements -->
+  <div class="bg-shapes">
+    <div class="shape shape1"><i class="fas fa-leaf"></i></div>
+    <div class="shape shape2"><i class="fas fa-apple-alt"></i></div>
+    <div class="shape shape3"><i class="fas fa-lemon"></i></div>
+    <div class="shape shape4"><i class="fas fa-pepper-hot"></i></div>
+    <div class="shape shape5"><i class="fas fa-seedling"></i></div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card register-card p-4 p-md-5">
+          <!-- Logo & Header -->
+          <div class="logo">
+            <i class="fas fa-carrot"></i>
+            <h2>FitBite</h2>
+          </div>
+
+          <h3 class="text-center title-gradient mb-2">
+            Become a Seller Partner
+          </h3>
+          <p class="subtitle">
+            Join our healthy food marketplace and reach thousands of
+            health-conscious customers
+          </p>
+
+          <div class="row">
+            <!-- Registration Form -->
+            <div class="col-lg-8">
+              <form action="cregister" method="POST">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="input-group">
+                      <i class="fas fa-building"></i>
+                      <input type="text" name="companyname" class="form-control" placeholder="Company / Brand Name" required />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <i class="fas fa-user"></i>
+                      <input type="text" name="ownername" class="form-control" placeholder="Owner Name" required />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="input-group">
+                      <i class="fas fa-envelope"></i>
+                      <input type="email" name="email" class="form-control" placeholder="Email Address" required />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <i class="fas fa-phone"></i>
+                      <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="input-group">
+                    <i class="fas fa-home"></i>
+                    <textarea class="form-control" name="address" rows="3" placeholder="Business Address" required></textarea>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="input-group">
+                    <i class="fas fa-file-invoice"></i>
+                    <input type="text" name="gstnumber" class="form-control" placeholder="GST Number" maxlength="15" required />
+                  </div>
+                </div>
+
+                <div class="row mb-4">
+                  <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="input-group">
+                      <i class="fas fa-lock"></i>
+                      <input type="password" name="password" class="form-control" placeholder="Password" required />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="input-group">
+                      <i class="fas fa-lock"></i>
+                      <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password" required />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="termsCheck" required />
+                    <label class="form-check-label" for="termsCheck">
+                      I agree to the
+                      <a href="#" class="healthy-link">Terms & Conditions</a>
+                      and <a href="#" class="healthy-link">Privacy Policy</a>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-healthy">
+                  <i class="fas fa-user-plus"></i> Register as Seller
+                </button>
+
+                <p class="text-center mt-4 mb-0">
+                  Already a seller?
+                  <a href="#" class="healthy-link">Login to your seller dashboard</a>
+                </p>
+              </form>
+            </div>
+
+            <!-- Side Benefits Panel -->
+            <div class="col-lg-4">
+              <div class="healthy-features mt-4 mt-lg-0">
+                <h4><i class="fas fa-award"></i> Seller Benefits</h4>
+
+                <div class="feature-item">
+                  <i class="fas fa-users"></i>
+                  <div>
+                    <h6 class="mb-1">Wide Customer Base</h6>
+                    <small>Reach 50,000+ health-conscious customers</small>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <i class="fas fa-shipping-fast"></i>
+                  <div>
+                    <h6 class="mb-1">Logistics Support</h6>
+                    <small>Delivery network for reliable shipping</small>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <i class="fas fa-shield-alt"></i>
+                  <div>
+                    <h6 class="mb-1">Secure Payments</h6>
+                    <small>Timely payments with fraud protection</small>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <i class="fas fa-headset"></i>
+                  <div>
+                    <h6 class="mb-1">24/7 Support</h6>
+                    <small>Dedicated seller support team</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div id="successMessage" class="success-message">
+    <i class="fas fa-check-circle"></i> Registration successful! Welcome to
+    FreshBite.
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+      const icon = menuToggle.querySelector('i');
+      if (icon.classList.contains('fa-bars')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        const icon = menuToggle.querySelector('i');
+        if (icon) {
+          icon.classList.remove('fa-times');
+          icon.classList.add('fa-bars');
+        }
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.15)';
+      } else {
+        navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+      }
+    });
+
+    // Form submission with animations
+    document.querySelector('form').addEventListener('submit', function (e) {
+      // Don't prevent default - let Django handle the form submission
+      const submitButton = this.querySelector('button[type="submit"]');
+      const originalText = submitButton.innerHTML;
+
+      // Button loading animation
+      submitButton.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> Processing Registration...';
+      submitButton.disabled = true;
+
+      // Let the form submit normally after a small delay to show animation
+      setTimeout(() => {
+        // Form will submit normally
+      }, 500);
+    });
+
+    // Input focus animations
+    document.querySelectorAll(".form-control").forEach((input) => {
+      input.addEventListener("focus", function () {
+        this.parentElement.querySelector("i").style.color = "#2E7D32";
+        this.parentElement.style.transform = "scale(1.02)";
+        this.parentElement.style.transition = "transform 0.3s";
+      });
+
+      input.addEventListener("blur", function () {
+        this.parentElement.querySelector("i").style.color = "#4CAF50";
+        this.parentElement.style.transform = "scale(1)";
+      });
+    });
+
+    // Feature item hover effect
+    document.querySelectorAll(".feature-item").forEach((item) => {
+      item.addEventListener("mouseenter", function () {
+        const icon = this.querySelector("i");
+        icon.style.transform = "scale(1.2)";
+        icon.style.transition = "transform 0.3s";
+      });
+
+      item.addEventListener("mouseleave", function () {
+        const icon = this.querySelector("i");
+        icon.style.transform = "scale(1)";
+      });
+    });
+
+    // Page load animation
+    document.addEventListener("DOMContentLoaded", function () {
+      const card = document.querySelector(".register-card");
+      card.style.opacity = "0";
+      card.style.transform = "translateY(30px)";
+
+      setTimeout(() => {
+        card.style.transition = "opacity 0.8s, transform 0.8s";
+        card.style.opacity = "1";
+        card.style.transform = "translateY(0)";
+      }, 300);
+
+      // Animate feature items sequentially
+      const featureItems = document.querySelectorAll(".feature-item");
+      featureItems.forEach((item, index) => {
+        item.style.opacity = "0";
+        item.style.transform = "translateX(-20px)";
+
+        setTimeout(() => {
+          item.style.transition = "opacity 0.5s, transform 0.5s";
+          item.style.opacity = "1";
+          item.style.transform = "translateX(0)";
+        }, 500 + index * 100);
+      });
+    });
+  </script>
+</body>
+
+</html>

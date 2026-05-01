@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - FitBite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            padding-top: 80px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            z-index: 9999;
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            text-decoration: none;
+        }
+
+        .navbar-brand h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-brand .text-primary {
+            color: #4CAF50;
+        }
+
+        .navbar-brand .text-success {
+            color: #2e7d32;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link:hover {
+            color: #4CAF50;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.2rem;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .cart-icon:hover {
+            color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 30px;
+        }
+
+        .user-welcome i {
+            color: #4CAF50;
+        }
+
+        .user-welcome span {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Mobile menu button */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            color: #4CAF50;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb i {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .breadcrumb .current {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Order Header */
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translate(-100%, -100%); }
+            100% { transform: rotate(45deg) translate(100%, 100%); }
+        }
+
+        .order-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .order-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .order-title i {
+            font-size: 40px;
+            opacity: 0.9;
+        }
+
+        .order-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .order-title p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .status-pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .status-confirmed { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .status-prepared { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+        .status-dispatched { background: rgba(111, 66, 193, 0.2); color: #6f42c1; }
+        .status-delivered { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+        .status-cancelled { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+
+        /* Order Body */
+        .order-body {
+            padding: 40px;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 16px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .step.completed .step-icon {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+            animation: bounce 0.5s ease;
+        }
+
+        .step.active .step-icon {
+            border-color: #4CAF50;
+            color: #4CAF50;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step.completed .step-label {
+            color: #4CAF50;
+        }
+
+        .step.active .step-label {
+            color: #4CAF50;
+            font-weight: 700;
+        }
+
+        .estimated-delivery {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .estimated-delivery i {
+            color: #4CAF50;
+            margin-right: 5px;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .section-title i {
+            color: #4CAF50;
+            font-size: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-label i {
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .address-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            line-height: 1.8;
+            color: #555;
+            border: 1px solid #eee;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .address-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #4CAF50;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .amount-box {
+            background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .amount-label {
+            font-size: 18px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .amount-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .payment-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .payment-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .payment-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .payment-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .payment-refunded {
+            background: #e2d5f1;
+            color: #6610f2;
+        }
+
+        /* Order Items */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .order-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 25px;
+            color: #666;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .item-meta i {
+            color: #4CAF50;
+            width: 16px;
+        }
+
+        .item-quantity {
+            margin-top: 8px;
+        }
+
+        .quantity-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: #4CAF50;
+            font-size: 20px;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        /* Seller Information */
+        .seller-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #666;
+        }
+
+        .seller-info i {
+            color: #4CAF50;
+        }
+
+        .seller-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+
+        .btn-outline:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .alert i {
+            font-size: 20px;
+        }
+
+        /* Nutrition Info */
+        .nutrition-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .nutrition-item {
+            text-align: center;
+        }
+
+        .nutrition-value {
+            font-weight: 700;
+            color: #4CAF50;
+            font-size: 1rem;
+        }
+
+        .nutrition-label {
+            font-size: 0.7rem;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 1rem 0;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                flex-direction: column;
+                gap: 0;
+                align-items: center;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 1rem;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .user-welcome {
+                margin: 10px 0;
+            }
+
+            .order-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-title {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .progress-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .progress-steps::before {
+                display: none;
+            }
+
+            .step {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                text-align: left;
+            }
+
+            .step-icon {
+                margin: 0;
+            }
+
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-image {
+                width: 100%;
+                height: 150px;
+            }
+
+            .item-price {
+                text-align: left;
+                width: 100%;
+                padding-top: 10px;
+                border-top: 1px solid #eee;
+            }
+
+            .item-meta {
+                gap: 15px;
+            }
+
+            .nutrition-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .navbar, .actions, .breadcrumb {
+                display: none;
+            }
+            
+            body {
+                padding: 20px;
+                background: white;
+            }
+            
+            .order-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <h1>
+                    <span class="text-primary">Fit</span><span class="text-success">Bit</span>
+                </h1>
+            </a>
+
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="{% url 'userdashboard' %}" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'opensearch' %}" class="nav-link">Shop</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'order_history' %}" class="nav-link active">My Orders</a>
+                </li>
+                {% if user_email %}
+                <li class="nav-item">
+                    <div class="user-welcome">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Hi, {{ user_email|truncatechars:15 }}</span>
+                    </div>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="/cart/" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">{{ cart_count|default:0 }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <div class="container">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{% url 'userdashboard' %}"><i class="fas fa-home"></i> Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{% url 'order_history' %}">My Orders</a>
+            <i class="fas fa-chevron-right"></i>
+            <span class="current">Order Details</span>
+        </div>
+
+        <!-- Order Card -->
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-header-content">
+                    <div class="order-title">
+                        <i class="fas fa-file-invoice"></i>
+                        <div>
+                            <h1>Order Details</h1>
+                            <p>{{ order.order_id }}</p>
+                        </div>
+                    </div>
+                    <span class="status-badge status-{{ order.order_status }}">
+                        <i class="fas fa-{% if order.order_status == 'pending' %}clock{% elif order.order_status == 'confirmed' %}check-circle{% elif order.order_status == 'prepared' %}utensils{% elif order.order_status == 'dispatched' %}truck{% elif order.order_status == 'delivered' %}home{% else %}times-circle{% endif %}"></i>
+                        {{ order.get_order_status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-body">
+                <!-- Progress Tracker -->
+                {% if order.order_status != 'cancelled' %}
+                <div class="progress-tracker">
+                    <div class="progress-steps">
+                        <div class="step {% if order.order_status == 'pending' or order.order_status == 'confirmed' or order.order_status == 'prepared' or order.order_status == 'dispatched' or order.order_status == 'delivered' %}completed{% endif %}">
+                            <div class="step-icon"><i class="fas fa-clock"></i></div>
+                            <div class="step-label">Pending</div>
+                        </div>
+                        <div class="step {% if order.order_status == 'confirmed' or order.order_status == 'prepared' or order.order_status == 'dispatched' or order.order_status == 'delivered' %}completed{% endif %} {% if order.order_status == 'confirmed' %}active{% endif %}">
+                            <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="step-label">Confirmed</div>
+                        </div>
+                        <div class="step {% if order.order_status == 'prepared' or order.order_status == 'dispatched' or order.order_status == 'delivered' %}completed{% endif %} {% if order.order_status == 'prepared' %}active{% endif %}">
+                            <div class="step-icon"><i class="fas fa-utensils"></i></div>
+                            <div class="step-label">Prepared</div>
+                        </div>
+                        <div class="step {% if order.order_status == 'dispatched' or order.order_status == 'delivered' %}completed{% endif %} {% if order.order_status == 'dispatched' %}active{% endif %}">
+                            <div class="step-icon"><i class="fas fa-truck"></i></div>
+                            <div class="step-label">Dispatched</div>
+                        </div>
+                        <div class="step {% if order.order_status == 'delivered' %}completed active{% endif %}">
+                            <div class="step-icon"><i class="fas fa-home"></i></div>
+                            <div class="step-label">Delivered</div>
+                        </div>
+                    </div>
+                    {% if order.end_date and order.order_status != 'delivered' and order.order_status != 'cancelled' %}
+                    <div class="estimated-delivery">
+                        <i class="fas fa-calendar-check"></i>
+                        Estimated Delivery: {{ order.end_date|date:"l, d M Y" }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Order Information -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Order Information
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-hashtag"></i> Order ID</span>
+                            <span class="info-value">{{ order.order_id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-calendar"></i> Order Date</span>
+                            <span class="info-value">{{ order.order_date|date:"d M Y, h:i A" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-tag"></i> Plan</span>
+                            <span class="info-value">{{ order.get_plan_display }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-calendar-alt"></i> Duration</span>
+                            <span class="info-value">{{ order.start_date|date:"d M" }} - {{ order.end_date|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-user"></i>
+                        Customer Details
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-user-circle"></i> Full Name</span>
+                            <span class="info-value">{{ order.full_name }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-phone"></i> Phone</span>
+                            <span class="info-value">{{ order.phone }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Address -->
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Delivery Address
+                    </div>
+                    <div class="address-box">
+                        <i class="fas fa-map-pin" style="color: #4CAF50; margin-right: 10px;"></i>
+                        {{ order.address }}<br>
+                        {{ order.city }}, {{ order.state }} - {{ order.pincode }}
+                    </div>
+                </div>
+
+                <!-- Order Items with Product Details -->
+                {% if order_items %}
+                <div class="section">
+                    <div class="section-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Order Items
+                    </div>
+                    <div class="items-list">
+                        {% for item in order_items %}
+                        <div class="order-item">
+                            <div class="item-image">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}">
+                                {% else %}
+                                <img src="https://via.placeholder.com/100x100?text=No+Image" alt="No image">
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <div class="item-name">{{ item.product.product_name }}</div>
+                                <div class="item-meta">
+                                    <span><i class="fas fa-weight"></i> {{ item.product.weight|default:"N/A" }}g</span>
+                                    <span><i class="fas fa-fire"></i> {{ item.product.calories|default:"N/A" }} kcal</span>
+                                    <span><i class="fas fa-droplet"></i> Protein: {{ item.product.protein|default:"N/A" }}g</span>
+                                    <span><i class="fas fa-bolt"></i> Carbs: {{ item.product.carbs|default:"N/A" }}g</span>
+                                    <span><i class="fas fa-oil-can"></i> Fat: {{ item.product.fat|default:"N/A" }}g</span>
+                                </div>
+                                <div class="item-quantity">
+                                    <span class="quantity-badge">Quantity: {{ item.quantity }}</span>
+                                </div>
+                                
+                                <!-- Seller Information -->
+                                {% if item.product.seller %}
+                                <div class="seller-info">
+                                    <i class="fas fa-store"></i>
+                                    <span>Seller: <span class="seller-name">{{ item.product.seller.company_name }}</span></span>
+                                    <span><i class="fas fa-envelope"></i> {{ item.product.seller.email }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Nutrition Facts (Optional) -->
+                                {% if item.product.protein or item.product.carbs or item.product.fat %}
+                                <div class="nutrition-info">
+                                    {% if item.product.protein %}
+                                    <div class="nutrition-item">
+                                        <div class="nutrition-value">{{ item.product.protein }}g</div>
+                                        <div class="nutrition-label">Protein</div>
+                                    </div>
+                                    {% endif %}
+                                    {% if item.product.carbs %}
+                                    <div class="nutrition-item">
+                                        <div class="nutrition-value">{{ item.product.carbs }}g</div>
+                                        <div class="nutrition-label">Carbs</div>
+                                    </div>
+                                    {% endif %}
+                                    {% if item.product.fat %}
+                                    <div class="nutrition-item">
+                                        <div class="nutrition-value">{{ item.product.fat }}g</div>
+                                        <div class="nutrition-label">Fat</div>
+                                    </div>
+                                    {% endif %}
+                                    {% if item.product.fiber %}
+                                    <div class="nutrition-item">
+                                        <div class="nutrition-value">{{ item.product.fiber }}g</div>
+                                        <div class="nutrition-label">Fiber</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="item-price">
+                                ₹{% widthratio item.product.price 1 item.quantity %}
+                                <br><small style="font-size: 12px; color: #999;">(₹{{ item.product.price }} each)</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Payment Information -->
+                <div class="section payment-section">
+                    <div class="section-title">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Information
+                    </div>
+                    <div class="amount-box">
+                        <span class="amount-label">
+                            <i class="fas fa-rupee-sign"></i> Total Amount
+                        </span>
+                        <span class="amount-value">₹{{ order.total_amount }}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="payment-status payment-{{ order.payment_status }}">
+                            <i class="fas fa-{% if order.payment_status == 'paid' %}check-circle{% elif order.payment_status == 'pending' %}clock{% elif order.payment_status == 'failed' %}exclamation-circle{% else %}undo{% endif %}"></i>
+                            Payment: {{ order.get_payment_status_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="actions">
+                    <a href="{% url 'order_tracking' order.id %}" class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt"></i> Track Order
+                    </a>
+                    <a href="{% url 'order_history' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Orders
+                    </a>
+                    {% if order.order_status == 'pending' or order.order_status == 'confirmed' %}
+                    <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Cancel Order
+                    </a>
+                    {% endif %}
+                    {% if order.payment_status == 'pending' and order.order_status != 'cancelled' %}
+                    <a href="{% url 'initiate_payment' order.id %}" class="btn btn-outline">
+                        <i class="fas fa-credit-card"></i> Retry Payment
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                });
+            });
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.15)';
+                } else {
+                    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+                }
+            }
+        });
+
+        // Print functionality
+        function printOrder() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

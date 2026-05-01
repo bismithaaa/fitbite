@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Slots - Dietitian Dashboard | FitBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            padding-top: 80px;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 80px);
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar-link i {
+            width: 25px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .sidebar-link:hover {
+            background: #f0f0f0;
+            color: var(--FitBite-green);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(0,177,64,0.1), transparent);
+            color: var(--FitBite-green);
+            border-right: 3px solid var(--FitBite-green);
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            padding: 20px 30px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+        
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Slot Cards */
+        .slot-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .slot-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .slot-card h5 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            color: #2c3e50;
+        }
+        
+        .slot-card h5 i {
+            color: var(--FitBite-green);
+            margin-right: 8px;
+        }
+        
+        .slot-time {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .slot-available {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .slot-booked {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .slot-available:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px rgba(0,177,64,0.2);
+        }
+        
+        .leave-day {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #ffeeba;
+        }
+        
+        .btn-sm-custom {
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 15px;
+            margin-top: 6px;
+        }
+        
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, var(--FitBite-green), #2e7d32);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .info-banner i {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .btn-mark-leave {
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-mark-leave:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 1000;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .slot-time {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a href="{% url 'dietitian_dashboard' %}" class="navbar-brand">
+                <h1>Fit<span style="color: var(--FitBite-green);">Bit</span> Dietitian</h1>
+            </a>
+            <div>
+                <span class="me-3">
+                    <i class="fas fa-user-md"></i> {{ dietitian.name }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_dashboard' %}" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_appointments' %}" class="sidebar-link">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_payment_report' %}" class="sidebar-link">
+                    <i class="fas fa-file-invoice-dollar"></i> Payment Report
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_messages' %}" class="sidebar-link">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_slots' %}" class="sidebar-link active">
+                    <i class="fas fa-clock"></i> Manage Slots
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-clock"></i> Manage Time Slots</h2>
+            <button class="btn btn-mark-leave" data-bs-toggle="modal" data-bs-target="#leaveModal">
+                <i class="fas fa-calendar-minus"></i> Mark Leave
+            </button>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Slot Management Guide:</strong><br>
+                    <small>Available slots are shown in green. Booked slots are shown in red. You can block available slots or mark full days as leave.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Existing Leaves -->
+        {% if leaves %}
+        <div class="slot-card">
+            <h5><i class="fas fa-calendar-alt"></i> Upcoming Leaves</h5>
+            <div class="row">
+                {% for leave in leaves %}
+                <div class="col-md-3 col-sm-4 col-6 mb-2">
+                    <div class="leave-day d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-umbrella-beach"></i><br>
+                            <strong>{{ leave.leave_date|date:"d M Y" }}</strong><br>
+                            <small>{{ leave.reason|default:"No reason provided"|truncatechars:20 }}</small>
+                        </div>
+                        <a href="{% url 'dietitian_remove_leave' leave.id %}" 
+                           class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Remove this leave? This will restore all slots for this day.')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Slots by Date -->
+        {% for date, data in slots_by_date.items %}
+        <div class="slot-card">
+            <h5>
+                <i class="fas fa-calendar-day"></i> 
+                {{ date|date:"l, d F Y" }}
+                {% if date == today %}
+                <span class="badge bg-success ms-2">Today</span>
+                {% endif %}
+            </h5>
+            {% if data.is_leave %}
+                <div class="leave-day text-center py-4">
+                    <i class="fas fa-umbrella-beach fa-2x mb-2"></i>
+                    <h6>On Leave</h6>
+                    <small>No slots available for this day</small>
+                </div>
+            {% else %}
+                <div class="row">
+                    {% for slot in data.slots %}
+                    <div class="col-md-2 col-sm-3 col-4 mb-2">
+                        <div class="slot-time {% if slot.is_booked %}slot-booked{% else %}slot-available{% endif %}">
+                            <i class="fas fa-clock"></i><br>
+                            <strong>{{ slot.get_slot_time_display }}</strong><br>
+                            {% if slot.is_booked %}
+                                <small><i class="fas fa-user-check"></i> Booked</small>
+                                {% if slot.booked_by %}
+                                <br><small class="text-muted">by: {{ slot.booked_by.name|truncatechars:10 }}</small>
+                                {% endif %}
+                            {% else %}
+                                <small><i class="fas fa-check-circle"></i> Available</small>
+                                <button class="btn btn-sm btn-danger btn-sm-custom" 
+                                        onclick="toggleSlot({{ slot.id }}, 'block')"
+                                        title="Block this slot">
+                                    <i class="fas fa-ban"></i> Block
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center text-muted py-3">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <p>No slots configured for this day</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if not data.slots %}
+                <div class="text-center mt-3">
+                    <button class="btn btn-outline-success btn-sm" onclick="generateSlots('{{ date|date:'Y-m-d' }}')">
+                        <i class="fas fa-plus-circle"></i> Generate Slots for this day
+                    </button>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-week fa-4x text-muted mb-3"></i>
+            <h3>No Slots Available</h3>
+            <p class="text-muted">No slots have been generated for the upcoming days.</p>
+            <button class="btn btn-success" onclick="generateAllSlots()">
+                <i class="fas fa-sync-alt"></i> Generate Next 7 Days Slots
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Leave Modal -->
+    <div class="modal fade" id="leaveModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-minus"></i> Mark Leave</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select Date</label>
+                            <input type="date" name="leave_date" class="form-control" required min="{% now 'Y-m-d' %}">
+                            <small class="text-muted">All slots for this day will be removed</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason (Optional)</label>
+                            <textarea name="reason" class="form-control" rows="3" placeholder="e.g., Vacation, Training, Medical leave..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Mark Leave
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Slots Modal -->
+    <div class="modal fade" id="generateSlotsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-cog"></i> Generate Slots</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This will generate all time slots for the selected day.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Slots are 30-minute intervals from 9:00 AM to 5:30 PM
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmGenerateBtn">Generate Slots</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedDate = null;
+        
+        function toggleSlot(slotId, action) {
+            fetch('{% url "dietitian_slot_toggle" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `slot_id=${slotId}&action=${action}`
+            })
+            .then(response => response.json())
+            .then(data => { 
+                if(data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Error updating slot');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating slot');
+            });
+        }
+        
+        function generateSlots(date) {
+            selectedDate = date;
+            const modal = new bootstrap.Modal(document.getElementById('generateSlotsModal'));
+            modal.show();
+        }
+        
+        function generateAllSlots() {
+            if(confirm('Generate slots for the next 7 days? This will create all time slots for each day.')) {
+                fetch('{% url "dietitian_generate_slots" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `action=generate_all`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error || 'Error generating slots');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error generating slots');
+                });
+            }
+        }
+        
+        document.getElementById('confirmGenerateBtn')?.addEventListener('click', function() {
+            if(selectedDate) {
+                fetch('{% url "dietitian_generate_slots" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `action=generate_date&date=${selectedDate}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error || 'Error generating slots');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error generating slots');
+                });
+            }
+        });
+        
+        // Mobile menu toggle
+        const toggleBtn = document.createElement('button');
+        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        toggleBtn.className = 'btn btn-success position-fixed top-0 start-0 m-2 d-md-none';
+        toggleBtn.style.zIndex = '1001';
+        toggleBtn.style.borderRadius = '50%';
+        toggleBtn.style.width = '45px';
+        toggleBtn.style.height = '45px';
+        toggleBtn.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+        document.body.appendChild(toggleBtn);
+        
+        // Auto-refresh slots every 2 minutes (optional)
+        setInterval(function() {
+            location.reload();
+        }, 120000);
+    </script>
+</body>
+</html>

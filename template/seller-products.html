@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Seller Dashboard</title>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar - Updated to match seller pages */
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: #4CAF50;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .seller-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+        }
+
+        .seller-details {
+            text-align: left;
+        }
+
+        .seller-details h3 {
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: white;
+        }
+
+        .seller-details p {
+            font-size: 11px;
+            opacity: 0.8;
+            color: #ecf0f1;
+        }
+
+        /* Menu Items */
+        .menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #34495e;
+            border-left-color: #4CAF50;
+        }
+
+        .menu-item.active {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4CAF50;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 24px;
+            color: #4CAF50;
+        }
+
+        .menu-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 15px 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 i {
+            color: #4CAF50;
+        }
+
+        .header-breadcrumb {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .header-breadcrumb a {
+            color: #4CAF50;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .header-breadcrumb a:hover {
+            color: #2e7d32;
+            text-decoration: underline;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .form-header h2 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        @media (max-width: 992px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+            background-color: #fff8f8;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error-message i {
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .success-message i {
+            font-size: 14px;
+        }
+
+        /* Textarea */
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Select */
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .file-upload:hover {
+            border-color: #4CAF50;
+            background: #f1f8f1;
+        }
+
+        .file-upload i {
+            font-size: 48px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .file-upload p {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .file-upload span {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #e0e0e0;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .remove-image:hover {
+            background: #c0392b;
+        }
+
+        /* Nutrition Grid */
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .nutrition-input {
+            position: relative;
+        }
+
+        .nutrition-unit {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* Price Input */
+        .price-input {
+            position: relative;
+        }
+
+        .price-input .currency {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .price-input .form-control {
+            padding-left: 35px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-submit {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(76, 175, 80, 0.2);
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar-header {
+                padding: 20px 15px;
+            }
+            
+            .logo h2, .seller-details {
+                display: none;
+            }
+            
+            .menu-item span {
+                display: none;
+            }
+            
+            .menu-item {
+                padding: 15px;
+                justify-content: center;
+            }
+            
+            .menu-item i {
+                margin: 0;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .nutrition-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar - Updated with correct URLs -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="bi bi-shop"></i>
+                <h2>FitBite Seller</h2>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="seller-details">
+                    <h3>{{ seller.company_name|default:"Seller" }}</h3>
+                    <p>{{ seller.email|default:"seller@example.com" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <ul class="menu">
+            <li>
+                <a href="{% url 'seller_dashboard' %}" class="menu-item">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_products' %}" class="menu-item">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'add_product' %}" class="menu-item active">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_orders' %}" class="menu-item">
+                    <i class="bi bi-cart-check"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'seller_feedback' %}" class="menu-item">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Feedback</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="{% url 'seller_inventory' %}" class="menu-item">
+                    <i class="bi bi-clipboard-data"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+            
+            <div class="menu-divider"></div>
+            
+            <li>
+                <a href="{% url 'seller_profile' %}" class="menu-item">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_logout' %}" class="menu-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>
+                    <i class="bi bi-plus-circle"></i>
+                    Add New Product
+                </h1>
+                <div class="header-breadcrumb">
+                    <a href="{% url 'seller_dashboard' %}">Dashboard</a> / 
+                    <a href="{% url 'seller_products' %}">Products</a> / 
+                    <span>Add New</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <div>
+                    <h2>Product Information</h2>
+                    <p>Fill in the details below to add a new product to your store</p>
+                </div>
+            </div>
+
+            <form id="addProductForm" enctype="multipart/form-data" action="{% url 'add_product' %}" method="POST" novalidate>
+                {% csrf_token %}
+                <div class="form-grid">
+                    <!-- Left Column -->
+                    <div>
+                        <!-- Product Name -->
+                        <div class="form-group">
+                            <label class="required">Product Name</label>
+                            <input type="text" class="form-control" name="product_name" id="productName" placeholder="Enter product name" required>
+                            <div class="error-message" id="productNameError">
+                                <i class="bi bi-exclamation-circle"></i> Product name must be at least 2 characters and cannot contain numbers
+                            </div>
+                        </div>
+
+                        <!-- Product Description -->
+                        <div class="form-group">
+                            <label class="required">Product Description</label>
+                            <textarea class="form-control" name="description" id="description" placeholder="Describe your product..." required></textarea>
+                            <div class="error-message" id="descriptionError">
+                                <i class="bi bi-exclamation-circle"></i> Description must be at least 10 characters
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label class="required">Meal Category</label>
+                            <select class="form-control" name="category" id="category" required>
+                                <option value="">-- Select Meal Category --</option>
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch">Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snacks">Snacks</option>
+                                <option value="weight_loss">Weight Loss</option>
+                                <option value="muscle_gain">Muscle Gain</option>
+                                <option value="fat_loss">Fat Loss</option>
+                                <option value="high_protein">High Protein</option>
+                                <option value="low_carb">Low Carb</option>
+                                <option value="keto">Keto</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="vegetarian">Vegetarian</option>
+                                <option value="pre_workout">Pre-Workout Meal</option>
+                                <option value="post_workout">Post-Workout Meal</option>
+                                <option value="diabetic_friendly">Diabetic Friendly</option>
+                                <option value="gluten_free">Gluten Free</option>
+                                <option value="diet_plan">Diet Plan Meal</option>
+                            </select>
+                            <div class="error-message" id="categoryError">
+                                <i class="bi bi-exclamation-circle"></i> Please select a category
+                            </div>
+                        </div>
+
+                        <!-- Product Images -->
+                        <div class="form-group">
+                            <label class="required">Product Image</label>
+                            <div class="file-upload" id="imageUpload">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <p>Click to upload product image</p>
+                                <span>JPEG, PNG or WebP (Max 5MB)</span>
+                                <input type="file" name="images" accept="image/*" id="imageInput" required>
+                            </div>
+                            <div class="file-preview" id="imagePreview"></div>
+                            <div class="error-message" id="imageError">
+                                <i class="bi bi-exclamation-circle"></i> Please upload a product image
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <!-- Nutrition Information -->
+                        <div class="form-group">
+                            <label>Nutrition Information (per serving)</label>
+                            <div class="nutrition-grid">
+                                <div class="nutrition-input">
+                                    <input class="form-control" type="text" name="calories" id="calories" placeholder="Calories" value="">
+                                    <span class="nutrition-unit">kcal</span>
+                                </div>
+                                <div class="nutrition-input">
+                                    <input class="form-control" type="text" name="protein" id="protein" placeholder="Protein" value="">
+                                    <span class="nutrition-unit">g</span>
+                                </div>
+                                <div class="nutrition-input">
+                                    <input class="form-control" type="text" name="carbs" id="carbs" placeholder="Carbs" value="">
+                                    <span class="nutrition-unit">g</span>
+                                </div>
+                                <div class="nutrition-input">
+                                    <input class="form-control" type="text" name="fat" id="fat" placeholder="Fat" value="">
+                                    <span class="nutrition-unit">g</span>
+                                </div>
+                                <div class="nutrition-input">
+                                    <input class="form-control" type="text" name="fiber" id="fiber" placeholder="Fiber" value="">
+                                    <span class="nutrition-unit">g</span>
+                                </div>
+                            </div>
+                            <small style="color: #999;">Enter numbers only (e.g., 100, 10.5). Leave empty if not applicable.</small>
+                            <div class="error-message" id="nutritionError" style="margin-top: 10px;">
+                                <i class="bi bi-exclamation-circle"></i> Please enter valid numbers only
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="form-group">
+                            <label class="required">Price (₹)</label>
+                            <div class="price-input">
+                                <span class="currency">₹</span>
+                                <input type="text" class="form-control" name="price" id="price" placeholder="0.00" required>
+                            </div>
+                            <div class="error-message" id="priceError">
+                                <i class="bi bi-exclamation-circle"></i> Please enter a valid price (e.g., 99.99)
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity -->
+                        <div class="form-group">
+                            <label class="required">Stock Quantity</label>
+                            <input type="text" class="form-control" name="stock" id="stock" placeholder="Enter quantity" value="" required>
+                            <div class="error-message" id="stockError">
+                                <i class="bi bi-exclamation-circle"></i> Please enter a valid number (e.g., 10, 25, 100)
+                            </div>
+                            <small style="color: #999;">Enter 0 if out of stock</small>
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="form-group">
+                            <label>Weight (g)</label>
+                            <input type="text" class="form-control" name="weight" id="weight" placeholder="0" value="">
+                            <div class="error-message" id="weightError">
+                                <i class="bi bi-exclamation-circle"></i> Please enter a valid number (e.g., 250, 500)
+                            </div>
+                            <small style="color: #999;">Enter weight in grams (optional)</small>
+                        </div>
+
+                        <!-- Additional Info -->
+                        <div class="form-group">
+                            <label>Additional Information</label>
+                            <textarea class="form-control" name="additional_info" id="additionalInfo" placeholder="Any additional details about the product..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'seller_products' %}" class="btn btn-cancel">
+                        <i class="bi bi-x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-submit" id="submitBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Add Product
+                    </button>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <span>Adding Product...</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Image Upload Preview
+    const imageUpload = document.getElementById('imageUpload');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageError = document.getElementById('imageError');
+
+    if (imageUpload) {
+        imageUpload.addEventListener('click', function() {
+            imageInput.click();
+        });
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            validateImage();
+            previewSingleImage(e.target.files[0]);
+        });
+    }
+
+    function validateImage() {
+        if (!imageInput.files || imageInput.files.length === 0) {
+            imageInput.classList.add('error');
+            imageError.classList.add('show');
+            return false;
+        } else {
+            imageInput.classList.remove('error');
+            imageError.classList.remove('show');
+            return true;
+        }
+    }
+
+    function previewSingleImage(file) {
+        if (!imagePreview) return;
+        
+        // Clear previous preview
+        imagePreview.innerHTML = '';
+        
+        if (!file) return;
+        
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
+            imageInput.value = '';
+            validateImage();
+            return;
+        }
+        
+        // Validate file type
+        if (!file.type.match('image.*')) {
+            alert(`File "${file.name}" is not an image.`);
+            imageInput.value = '';
+            validateImage();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            div.innerHTML = `
+                <img src="${e.target.result}" alt="Preview">
+                <div class="remove-image" onclick="removeImage()">×</div>
+            `;
+            imagePreview.appendChild(div);
+            validateImage(); // Image is valid now
+        };
+        reader.readAsDataURL(file);
+    }
+
+    window.removeImage = function() {
+        imageInput.value = '';
+        imagePreview.innerHTML = '';
+        validateImage();
+    };
+
+    // Helper function to check if string contains only numbers and decimals
+    function isValidNumber(value, allowDecimal = true) {
+        if (!value || value === '') return true; // Empty is allowed (will be treated as 0)
+        
+        // Remove any whitespace
+        value = value.toString().trim();
+        
+        // Regular expression for numbers (optional decimal)
+        const regex = allowDecimal ? /^\d*\.?\d+$/ : /^\d+$/;
+        
+        // Test the value
+        if (!regex.test(value)) return false;
+        
+        // Parse and check if it's a valid number
+        const num = parseFloat(value);
+        return !isNaN(num) && isFinite(num);
+    }
+
+    // Validation functions
+    function validateProductName() {
+        const field = document.getElementById('productName');
+        const error = document.getElementById('productNameError');
+        const value = field.value.trim();
+        
+        if (!value) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Product name is required';
+            error.classList.add('show');
+            return false;
+        } else if (value.length < 2) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Product name must be at least 2 characters';
+            error.classList.add('show');
+            return false;
+        } else if (/\d/.test(value)) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Product name cannot contain numbers';
+            error.classList.add('show');
+            return false;
+        } else {
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validateDescription() {
+        const field = document.getElementById('description');
+        const error = document.getElementById('descriptionError');
+        const value = field.value.trim();
+        
+        if (!value) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Description is required';
+            error.classList.add('show');
+            return false;
+        } else if (value.length < 10) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Description must be at least 10 characters';
+            error.classList.add('show');
+            return false;
+        } else {
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validateCategory() {
+        const field = document.getElementById('category');
+        const error = document.getElementById('categoryError');
+        const value = field.value;
+        
+        if (!value) {
+            field.classList.add('error');
+            error.classList.add('show');
+            return false;
+        } else {
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validatePrice() {
+        const field = document.getElementById('price');
+        const error = document.getElementById('priceError');
+        const value = field.value.trim();
+        
+        if (!value) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Price is required';
+            error.classList.add('show');
+            return false;
+        } else if (!isValidNumber(value, true)) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Please enter a valid number (e.g., 99.99)';
+            error.classList.add('show');
+            return false;
+        } else {
+            const numValue = parseFloat(value);
+            if (numValue <= 0) {
+                field.classList.add('error');
+                error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Price must be greater than 0';
+                error.classList.add('show');
+                return false;
+            }
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validateStock() {
+        const field = document.getElementById('stock');
+        const error = document.getElementById('stockError');
+        const value = field.value.trim();
+        
+        if (!value && value !== '') {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Stock quantity is required';
+            error.classList.add('show');
+            return false;
+        } else if (value === '') {
+            // Empty is allowed - will be treated as 0
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        } else if (!isValidNumber(value, false)) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Please enter a valid whole number (e.g., 10, 25, 100)';
+            error.classList.add('show');
+            return false;
+        } else {
+            const numValue = parseInt(value);
+            if (numValue < 0) {
+                field.classList.add('error');
+                error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Stock cannot be negative';
+                error.classList.add('show');
+                return false;
+            }
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validateWeight() {
+        const field = document.getElementById('weight');
+        const error = document.getElementById('weightError');
+        const value = field.value.trim();
+        
+        // Weight is optional, so empty is fine
+        if (!value || value === '') {
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+        
+        if (!isValidNumber(value, false)) {
+            field.classList.add('error');
+            error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Please enter a valid whole number (e.g., 250, 500)';
+            error.classList.add('show');
+            return false;
+        } else {
+            const numValue = parseInt(value);
+            if (numValue < 0) {
+                field.classList.add('error');
+                error.innerHTML = '<i class="bi bi-exclamation-circle"></i> Weight cannot be negative';
+                error.classList.add('show');
+                return false;
+            }
+            field.classList.remove('error');
+            error.classList.remove('show');
+            return true;
+        }
+    }
+
+    function validateNutritionFields() {
+        const nutritionFields = ['calories', 'protein', 'carbs', 'fat', 'fiber'];
+        const nutritionError = document.getElementById('nutritionError');
+        let allValid = true;
+        let hasValue = false;
+        
+        nutritionFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            const value = field.value.trim();
+            
+            // Check if any field has a value
+            if (value !== '') {
+                hasValue = true;
+            }
+            
+            // Validate if value is provided
+            if (value !== '' && !isValidNumber(value, true)) {
+                allValid = false;
+                field.classList.add('error');
+            } else {
+                field.classList.remove('error');
+            }
+        });
+        
+        // Only show error if there's an invalid value
+        if (!allValid) {
+            nutritionError.classList.add('show');
+        } else {
+            nutritionError.classList.remove('show');
+        }
+        
+        return allValid;
+    }
+
+    // Real-time validation
+    document.getElementById('productName').addEventListener('input', validateProductName);
+    document.getElementById('productName').addEventListener('blur', validateProductName);
+    
+    document.getElementById('description').addEventListener('input', validateDescription);
+    document.getElementById('description').addEventListener('blur', validateDescription);
+    
+    document.getElementById('category').addEventListener('change', validateCategory);
+    
+    document.getElementById('price').addEventListener('input', validatePrice);
+    document.getElementById('price').addEventListener('blur', validatePrice);
+    
+    document.getElementById('stock').addEventListener('input', validateStock);
+    document.getElementById('stock').addEventListener('blur', validateStock);
+    
+    document.getElementById('weight').addEventListener('input', validateWeight);
+    document.getElementById('weight').addEventListener('blur', validateWeight);
+    
+    // Nutrition fields validation
+    document.querySelectorAll('#calories, #protein, #carbs, #fat, #fiber').forEach(input => {
+        input.addEventListener('input', validateNutritionFields);
+        input.addEventListener('blur', validateNutritionFields);
+        
+        // Allow user to clear the field
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                // Allow deletion
+                return;
+            }
+            
+            // Prevent non-numeric input
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Form Validation
+    const form = document.getElementById('addProductForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loading = document.getElementById('loading');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default submission
+            
+            // Run all validations
+            const isNameValid = validateProductName();
+            const isDescriptionValid = validateDescription();
+            const isCategoryValid = validateCategory();
+            const isPriceValid = validatePrice();
+            const isStockValid = validateStock();
+            const isWeightValid = validateWeight();
+            const isNutritionValid = validateNutritionFields();
+            const isImageValid = validateImage();
+            
+            // Check if all validations passed
+            if (isNameValid && isDescriptionValid && isCategoryValid && isPriceValid && isStockValid && isWeightValid && isNutritionValid && isImageValid) {
+                
+                // Show loading state
+                if (submitBtn && loading) {
+                    submitBtn.style.display = 'none';
+                    loading.style.display = 'flex';
+                }
+                
+                // Submit the form
+                this.submit();
+            } else {
+                // Scroll to first error
+                const firstError = document.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Show alert
+                alert('Please fix the errors before submitting. Make sure all number fields contain only numbers.');
+            }
+        });
+    }
+
+    // Cancel button
+    const cancelBtn = document.querySelector('.btn-cancel');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea, select');
+            let hasChanges = false;
+            
+            inputs.forEach(input => {
+                if (input.value.trim() !== '' && input.id !== 'calories' && input.id !== 'protein' && input.id !== 'carbs' && input.id !== 'fat' && input.id !== 'fiber') {
+                    hasChanges = true;
+                }
+            });
+            
+            if (imageInput && imageInput.files.length > 0) {
+                hasChanges = true;
+            }
+            
+            if (hasChanges && !confirm('Are you sure? All unsaved changes will be lost.')) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Add Product page loaded');
+        
+        // Set active menu item
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.menu-item').forEach(item => {
+            if (item.getAttribute('href') === currentPath) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

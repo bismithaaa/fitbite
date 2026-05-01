@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout - FitBite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2e7d32;
+            --dark-color: #2C3E50;
+            --light-color: #f6f5f7;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
+        body {
+            background: var(--light-color);
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            z-index: 9999;
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            text-decoration: none;
+        }
+
+        .navbar-brand h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .navbar-brand .text-primary {
+            color: var(--primary-color);
+        }
+
+        .navbar-brand .text-success {
+            color: var(--secondary-color);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        /* Checkout Form */
+        .checkout-form {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-header h2 {
+            color: var(--dark-color);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .form-header h2 i {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .required::after {
+            content: '*';
+            color: var(--error-color);
+            margin-left: 4px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            font-size: 14px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        input.error, textarea.error, select.error {
+            border-color: var(--error-color);
+            background-color: #fff8f8;
+        }
+
+        input.error:focus, textarea.error:focus, select.error:focus {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error-message i {
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        /* Plan Selection */
+        .plan-selection {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .plan-selection h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .plan-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .plan-option {
+            position: relative;
+        }
+
+        .plan-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .plan-option label {
+            display: block;
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        .plan-option input[type="radio"]:checked + label {
+            border-color: var(--primary-color);
+            background: rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .plan-option input[type="radio"].error + label {
+            border-color: var(--error-color);
+        }
+
+        .plan-option label i {
+            font-size: 24px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .plan-option label h4 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .plan-option label .price {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .plan-option label .price small {
+            font-size: 0.8rem;
+            color: #999;
+            font-weight: normal;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .summary-header h3 {
+            color: var(--dark-color);
+            margin: 0;
+        }
+
+        .cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .cart-item-quantity {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row.total {
+            border-bottom: none;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-text i {
+            color: var(--primary-color);
+        }
+
+        .place-order-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        .place-order-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .place-order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .back-to-cart {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-to-cart:hover {
+            text-decoration: underline;
+        }
+
+        /* Seller Info */
+        .seller-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .seller-info i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .plan-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container">
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">
+                <h1>
+                    <span class="text-primary">Fit</span><span class="text-success">Bit</span>
+                </h1>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="{% url 'userdashboard' %}" class="nav-link">Home</a></li>
+                <li><a href="/opensearch" class="nav-link">Shop</a></li>
+                <li><a href="/cart/" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">{{ cart_count }}</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="checkout-container">
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <div class="form-header">
+                    <h2><i class="fas fa-truck"></i> Shipping Information</h2>
+                </div>
+                
+                <form method="POST" action="{% url 'place_order_from_cart' %}" id="checkoutForm" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label class="required">Full Name</label>
+                        <input type="text" name="full_name" id="fullName" value="{{ customer.name }}" placeholder="Enter your full name" required>
+                        <div class="error-message" id="fullNameError">
+                            <i class="fas fa-exclamation-circle"></i> Please enter your full name
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Phone Number</label>
+                        <input type="tel" name="phone" id="phone" value="{{ customer.phone }}" placeholder="10-digit mobile number" required maxlength="10">
+                        <div class="error-message" id="phoneError">
+                            <i class="fas fa-exclamation-circle"></i> Please enter a valid 10-digit phone number
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required">Address</label>
+                        <textarea name="address" id="address" rows="3" placeholder="Enter your complete address" required>{{ customer.address }}</textarea>
+                        <div class="error-message" id="addressError">
+                            <i class="fas fa-exclamation-circle"></i> Please enter your address
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="required">City</label>
+                            <input type="text" name="city" id="city" placeholder="Enter city" required>
+                            <div class="error-message" id="cityError">
+                                <i class="fas fa-exclamation-circle"></i> Please enter your city
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">State</label>
+                            <input type="text" name="state" id="state" placeholder="Enter state" required>
+                            <div class="error-message" id="stateError">
+                                <i class="fas fa-exclamation-circle"></i> Please enter your state
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="required">Pincode</label>
+                            <input type="text" name="pincode" id="pincode" placeholder="6-digit pincode" required maxlength="6">
+                            <div class="error-message" id="pincodeError">
+                                <i class="fas fa-exclamation-circle"></i> Please enter a valid 6-digit pincode
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Plan Type</label>
+                            <!-- DROPDOWN SELECT (kept for reference, but will be synchronized with radio) -->
+                            <select name="plan" id="planSelect" required>
+                                <option value="">-- Select Plan --</option>
+                                <option value="single">Single Day</option>
+                                <option value="weekly">Weekly Plan</option>
+                                <option value="monthly">Monthly Plan</option>
+                            </select>
+                            <div class="error-message" id="planError">
+                                <i class="fas fa-exclamation-circle"></i> Please select a plan
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Visual Plan Selection (Radio Buttons) -->
+                    <div class="plan-selection">
+                        <h3><i class="fas fa-calendar-alt"></i> Choose Your Plan</h3>
+                        <div class="plan-options">
+                            <div class="plan-option">
+                                <input type="radio" name="plan_radio" id="plan_single" value="single">
+                                <label for="plan_single">
+                                    <i class="fas fa-sun"></i>
+                                    <h4>Single Day</h4>
+                                    <small>One-time delivery</small>
+                                </label>
+                            </div>
+                            
+                            <div class="plan-option">
+                                <input type="radio" name="plan_radio" id="plan_weekly" value="weekly">
+                                <label for="plan_weekly">
+                                    <i class="fas fa-calendar-week"></i>
+                                    <h4>Weekly Plan</h4>
+                                    <small>7 days subscription</small>
+                                </label>
+                            </div>
+                            
+                            <div class="plan-option">
+                                <input type="radio" name="plan_radio" id="plan_monthly" value="monthly">
+                                <label for="plan_monthly">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <h4>Monthly Plan</h4>
+                                    <small>30 days subscription</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Date Selection (for weekly/monthly plans) -->
+                    <div class="form-group" id="startDateGroup" style="display: none;">
+                        <label class="required">Start Date</label>
+                        <input type="date" name="start_date" id="startDate" min="{{ today|date:'Y-m-d' }}">
+                        <div class="error-message" id="startDateError">
+                            <i class="fas fa-exclamation-circle"></i> Please select a start date
+                        </div>
+                    </div>
+
+                    <!-- Hidden field to submit plan value (we'll sync radio to select on submit) -->
+                </form>
+                
+                <!-- Seller Information (if multiple sellers) -->
+                {% if sellers|length > 1 %}
+                <div class="seller-info">
+                    <i class="fas fa-store"></i>
+                    <strong>Note:</strong> Your order contains products from multiple sellers. They will be delivered together in one package.
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="summary-header">
+                    <h3><i class="fas fa-shopping-cart"></i> Order Summary</h3>
+                </div>
+                
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}">
+                            {% else %}
+                            <img src="https://via.placeholder.com/60x60?text=No+Image" alt="No image">
+                            {% endif %}
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">{{ item.product.product_name }}</div>
+                            <div class="cart-item-price">₹{{ item.product.price }}</div>
+                            <div class="cart-item-quantity">Qty: {{ item.quantity }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ subtotal|floatformat:2 }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Platform Fees</span>
+                    <span>₹{{ shipping|floatformat:2 }}</span>
+                </div>
+                <div class="info-text">
+                    <i class="fas fa-info-circle"></i> Platform fees support our service and secure transactions
+                </div>
+                <div class="summary-row" id="planMultiplierRow" style="display: none;">
+                    <span>Plan Multiplier</span>
+                    <span id="planMultiplier">1x</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span id="totalAmount">₹{{ total|floatformat:2 }}</span>
+                </div>
+                
+                <button type="submit" form="checkoutForm" class="place-order-btn" id="placeOrderBtn">
+                    <i class="fas fa-lock"></i> Place Order & Pay
+                </button>
+                
+                <a href="/cart/" class="back-to-cart">
+                    <i class="fas fa-arrow-left"></i> Back to Cart
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get cart data from backend
+        const subtotal = {{ subtotal }};
+        const platformFees = {{ shipping }};
+        
+        // Plan multipliers
+        const planMultipliers = {
+            'single': 1,
+            'weekly': 7,
+            'monthly': 30
+        };
+        
+        // Get DOM elements
+        const planSelect = document.getElementById('planSelect');
+        const planRadios = document.querySelectorAll('input[name="plan_radio"]');
+        const startDateGroup = document.getElementById('startDateGroup');
+        const startDateInput = document.getElementById('startDate');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        const planMultiplierRow = document.getElementById('planMultiplierRow');
+        const planMultiplierSpan = document.getElementById('planMultiplier');
+        const planError = document.getElementById('planError');
+        
+        // Helper to get currently selected plan value (from either dropdown or radio)
+        function getSelectedPlan() {
+            // First check radios
+            for (let radio of planRadios) {
+                if (radio.checked) return radio.value;
+            }
+            // Then check dropdown
+            if (planSelect.value) return planSelect.value;
+            return null;
+        }
+        
+        // Helper to set both dropdown and radio to the same value
+        function setPlan(value) {
+            if (!value) return;
+            // Update dropdown
+            planSelect.value = value;
+            // Update radios
+            for (let radio of planRadios) {
+                radio.checked = (radio.value === value);
+            }
+            // Revalidate plan UI
+            validatePlan();
+            // Update total and start date visibility
+            updateTotalAndVisibility();
+        }
+        
+        // Sync from dropdown to radios when dropdown changes
+        planSelect.addEventListener('change', function() {
+            setPlan(this.value);
+        });
+        
+        // Sync from radios to dropdown when radio changes
+        planRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                setPlan(this.value);
+            });
+        });
+        
+        // Validate plan selection
+        function validatePlan() {
+            const selected = getSelectedPlan();
+            if (!selected) {
+                planSelect.classList.add('error');
+                planError.classList.add('show');
+                return false;
+            } else {
+                planSelect.classList.remove('error');
+                planError.classList.remove('show');
+                return true;
+            }
+        }
+        
+        // Update total and start date visibility based on selected plan
+        function updateTotalAndVisibility() {
+            const selected = getSelectedPlan();
+            if (selected) {
+                const multiplier = planMultipliers[selected] || 1;
+                const total = (subtotal * multiplier) + platformFees;
+                totalAmountSpan.textContent = '₹' + total.toFixed(2);
+                planMultiplierRow.style.display = 'flex';
+                planMultiplierSpan.textContent = multiplier + 'x';
+                
+                // Show/hide start date for weekly/monthly plans
+                if (selected === 'weekly' || selected === 'monthly') {
+                    startDateGroup.style.display = 'block';
+                    startDateInput.required = true;
+                } else {
+                    startDateGroup.style.display = 'none';
+                    startDateInput.required = false;
+                    startDateInput.classList.remove('error');
+                    document.getElementById('startDateError').classList.remove('show');
+                }
+            } else {
+                // No plan selected: revert to original total (subtotal + fees)
+                totalAmountSpan.textContent = '₹' + (subtotal + platformFees).toFixed(2);
+                planMultiplierRow.style.display = 'none';
+                startDateGroup.style.display = 'none';
+                startDateInput.required = false;
+            }
+        }
+        
+        // Validation functions (same as before)
+        function validateFullName() {
+            const field = document.getElementById('fullName');
+            const error = document.getElementById('fullNameError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (value.length < 2) {
+                error.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters';
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (/\d/.test(value)) {
+                error.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name cannot contain numbers';
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validatePhone() {
+            const field = document.getElementById('phone');
+            const error = document.getElementById('phoneError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (!/^\d{10}$/.test(value)) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validateAddress() {
+            const field = document.getElementById('address');
+            const error = document.getElementById('addressError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (value.length < 5) {
+                error.innerHTML = '<i class="fas fa-exclamation-circle"></i> Address must be at least 5 characters';
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validateCity() {
+            const field = document.getElementById('city');
+            const error = document.getElementById('cityError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (value.length < 2) {
+                error.innerHTML = '<i class="fas fa-exclamation-circle"></i> City must be at least 2 characters';
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validateState() {
+            const field = document.getElementById('state');
+            const error = document.getElementById('stateError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (value.length < 2) {
+                error.innerHTML = '<i class="fas fa-exclamation-circle"></i> State must be at least 2 characters';
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validatePincode() {
+            const field = document.getElementById('pincode');
+            const error = document.getElementById('pincodeError');
+            const value = field.value.trim();
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else if (!/^\d{6}$/.test(value)) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        function validateStartDate() {
+            if (startDateGroup.style.display === 'none') return true;
+            
+            const field = startDateInput;
+            const error = document.getElementById('startDateError');
+            const value = field.value;
+            
+            if (!value) {
+                field.classList.add('error');
+                error.classList.add('show');
+                return false;
+            } else {
+                field.classList.remove('error');
+                error.classList.remove('show');
+                return true;
+            }
+        }
+        
+        // Real-time validation
+        document.getElementById('fullName').addEventListener('input', validateFullName);
+        document.getElementById('fullName').addEventListener('blur', validateFullName);
+        
+        document.getElementById('phone').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+            validatePhone();
+        });
+        document.getElementById('phone').addEventListener('blur', validatePhone);
+        
+        document.getElementById('address').addEventListener('input', validateAddress);
+        document.getElementById('address').addEventListener('blur', validateAddress);
+        
+        document.getElementById('city').addEventListener('input', validateCity);
+        document.getElementById('city').addEventListener('blur', validateCity);
+        
+        document.getElementById('state').addEventListener('input', validateState);
+        document.getElementById('state').addEventListener('blur', validateState);
+        
+        document.getElementById('pincode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+            validatePincode();
+        });
+        document.getElementById('pincode').addEventListener('blur', validatePincode);
+        
+        startDateInput.addEventListener('change', validateStartDate);
+        
+        // Form validation before submit
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default submission
+            
+            // Run all validations
+            const isFullNameValid = validateFullName();
+            const isPhoneValid = validatePhone();
+            const isAddressValid = validateAddress();
+            const isCityValid = validateCity();
+            const isStateValid = validateState();
+            const isPincodeValid = validatePincode();
+            const isPlanValid = validatePlan();
+            const isStartDateValid = validateStartDate();
+            
+            // Check if all validations passed
+            if (isFullNameValid && isPhoneValid && isAddressValid && isCityValid && 
+                isStateValid && isPincodeValid && isPlanValid && isStartDateValid) {
+                
+                // Ensure the dropdown matches the selected plan (it already does via sync, but double-check)
+                const selectedPlan = getSelectedPlan();
+                planSelect.value = selectedPlan; // just to be safe
+                
+                // Disable button to prevent double submission
+                const btn = document.getElementById('placeOrderBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Submit the form
+                this.submit();
+            } else {
+                // Scroll to first error
+                const firstError = document.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+        
+        // Initialize on page load
+        function initializePage() {
+            // Set min date for start date picker
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.min = today;
+            
+            // Pre-fill customer data and validate (assuming customer object exists)
+            validateFullName();
+            validatePhone();
+            validateAddress();
+            
+            // If there's a pre-selected plan in dropdown (e.g., from backend), sync to radios
+            if (planSelect.value) {
+                setPlan(planSelect.value);
+            }
+            
+            // Initial total update
+            updateTotalAndVisibility();
+        }
+        
+        initializePage();
+    </script>
+</body>
+</html>

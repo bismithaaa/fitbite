@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Dietitians - FitBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            padding-top: 80px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            z-index: 9999;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+        
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--FitBite-green);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--FitBite-green), #2e7d32);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Dietitians Grid */
+        .dietitians-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 50px 0;
+        }
+        
+        .dietitian-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .dietitian-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .dietitian-image {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .dietitian-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .dietitian-card:hover .dietitian-image img {
+            transform: scale(1.1);
+        }
+        
+        .dietitian-info {
+            padding: 20px;
+        }
+        
+        .dietitian-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .dietitian-specialization {
+            color: var(--FitBite-green);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .dietitian-details {
+            margin: 15px 0;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .detail-row i {
+            width: 20px;
+            color: var(--FitBite-green);
+        }
+        
+        .book-btn {
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .book-btn:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+        }
+        
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .slot-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .slot-btn:hover:not(.disabled) {
+            background: var(--FitBite-green);
+            color: white;
+            border-color: var(--FitBite-green);
+        }
+        
+        .slot-btn.selected {
+            background: var(--FitBite-green);
+            color: white;
+            border-color: var(--FitBite-green);
+        }
+        
+        .slot-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e9ecef;
+        }
+        
+        .date-navigation {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .date-nav-btn {
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .current-date-display {
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .fee-breakdown {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .fee-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--FitBite-green);
+            border-bottom: none;
+            padding-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active {
+                display: flex;
+            }
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'userdashboard' %}" class="navbar-brand"><h1>FitBite</h1></a>
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{% url 'userdashboard' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'opensearch' %}" class="nav-link">AI Search</a></li>
+                <li><a href="#" class="nav-link active">Dietitians</a></li>
+                <li><a href="{% url 'my_appointments' %}" class="nav-link">My Appointments</a></li>
+                <li><a href="{% url 'my_messages' %}" class="nav-link">Messages</a></li>
+                {% if user %}
+                <li class="nav-item"><div class="user-welcome"><i class="fas fa-user-circle"></i><span>{{ user.name|truncatechars:15 }}</span></div></li>
+                <li><a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-user-md"></i> Our Expert Dietitians</h1>
+            <p>Book appointments up to 7 days in advance | Consultation Fee: ₹300 + Platform Fee: ₹50</p>
+        </div>
+    </section>
+
+    <!-- Dietitians Grid -->
+    <div class="container">
+        <div class="dietitians-grid">
+            {% for dietitian in dietitians %}
+            <div class="dietitian-card">
+                <div class="dietitian-image">
+                    {% if dietitian.image %}
+                    <img src="{{ dietitian.image.url }}" alt="{{ dietitian.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x250?text=No+Image" alt="No image">
+                    {% endif %}
+                </div>
+                <div class="dietitian-info">
+                    <div class="dietitian-name">{{ dietitian.name }}</div>
+                    <div class="dietitian-specialization">{{ dietitian.specialization }}</div>
+                    <div class="dietitian-details">
+                        <div class="detail-row"><i class="fas fa-graduation-cap"></i> {{ dietitian.qualification }}</div>
+                        <div class="detail-row"><i class="fas fa-map-marker-alt"></i> {{ dietitian.location }}</div>
+                    </div>
+                    <button class="book-btn" onclick="openBookingModal({{ dietitian.id }}, '{{ dietitian.name }}')">
+                        <i class="fas fa-calendar-check"></i> Book Appointment (₹350)
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5" style="grid-column: 1/-1;">
+                <i class="fas fa-user-md fa-4x text-muted mb-3"></i>
+                <h3>No Dietitians Available</h3>
+                <p>Check back later for expert consultations</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book Appointment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="selectedDietitianId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Select Date (Next 7 Days Only)</label>
+                                <div class="date-navigation">
+                                    <button type="button" class="date-nav-btn" onclick="changeDate(-1)">&lt;</button>
+                                    <div class="current-date-display" id="currentDateDisplay"></div>
+                                    <button type="button" class="date-nav-btn" onclick="changeDate(1)">&gt;</button>
+                                </div>
+                                <input type="hidden" id="appointmentDate" value="">
+                                <div class="text-muted small mt-2">
+                                    <i class="fas fa-info-circle"></i> Available slots are shown for the selected date
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Available Time Slots</label>
+                                <div id="slotsContainer" class="d-flex flex-wrap gap-2"></div>
+                                <input type="hidden" id="selectedSlotId">
+                                <input type="hidden" id="selectedSlotTime">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Appointment</label>
+                        <textarea id="appointmentReason" class="form-control" rows="3" placeholder="What would you like to discuss?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Symptoms (if any)</label>
+                        <textarea id="appointmentSymptoms" class="form-control" rows="2" placeholder="Describe any symptoms..."></textarea>
+                    </div>
+                    
+                    <!-- Fee Breakdown -->
+                    <div class="fee-breakdown">
+                        <div class="fee-row">
+                            <span>Consultation Fee:</span>
+                            <span>₹300</span>
+                        </div>
+                        <div class="fee-row">
+                            <span>Platform Fee:</span>
+                            <span>₹50</span>
+                        </div>
+                        <div class="fee-row total">
+                            <span>Total Amount:</span>
+                            <span>₹350</span>
+                        </div>
+                        <div class="text-muted small mt-2">
+                            <i class="fas fa-lock"></i> Secure payment powered by Razorpay
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="processBooking()">
+                        <i class="fas fa-credit-card"></i> Pay ₹350 & Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let modal = null;
+        let currentDate = null;
+        let maxDate = null;
+        let minDate = null;
+        let selectedDietitianId = null;
+        
+        // Constants for fees
+        const CONSULTATION_FEE = 300;
+        const PLATFORM_FEE = 50;
+        const TOTAL_FEE = 350;
+        
+        // Get today's date and max date (7 days from now)
+        function initDates() {
+            const today = new Date();
+            minDate = new Date(today);
+            maxDate = new Date(today);
+            maxDate.setDate(today.getDate() + 7);
+            currentDate = new Date(today);
+            updateDateDisplay();
+        }
+        
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDisplayDate(date) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+        
+        function updateDateDisplay() {
+            document.getElementById('currentDateDisplay').innerHTML = formatDisplayDate(currentDate);
+            document.getElementById('appointmentDate').value = formatDate(currentDate);
+            loadSlots();
+        }
+        
+        function changeDate(delta) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(currentDate.getDate() + delta);
+            
+            if (newDate >= minDate && newDate <= maxDate) {
+                currentDate = newDate;
+                updateDateDisplay();
+            } else {
+                if (delta > 0) {
+                    alert('You can only book appointments up to 7 days in advance');
+                } else {
+                    alert('Cannot select past dates');
+                }
+            }
+        }
+        
+        function openBookingModal(dietitianId, dietitianName) {
+            selectedDietitianId = dietitianId;
+            document.getElementById('selectedDietitianId').value = dietitianId;
+            document.querySelector('#bookingModal .modal-title').innerHTML = `Book Appointment with ${dietitianName}`;
+            
+            initDates();
+            
+            document.getElementById('selectedSlotId').value = '';
+            document.getElementById('selectedSlotTime').value = '';
+            document.getElementById('appointmentReason').value = '';
+            document.getElementById('appointmentSymptoms').value = '';
+            
+            modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            modal.show();
+        }
+        
+        function loadSlots() {
+            const date = document.getElementById('appointmentDate').value;
+            if (!date || !selectedDietitianId) return;
+            
+            const slotsContainer = document.getElementById('slotsContainer');
+            slotsContainer.innerHTML = '<div class="text-center w-100"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+            
+            fetch(`/get-dietitian-slots/?dietitian_id=${selectedDietitianId}&date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    slotsContainer.innerHTML = `<p class="text-danger w-100 text-center">${data.error}</p>`;
+                } else if (data.slots.length === 0) {
+                    slotsContainer.innerHTML = '<p class="text-muted w-100 text-center">No slots available for this date</p>';
+                } else {
+                    slotsContainer.innerHTML = data.slots.map(slot => `
+                        <button class="slot-btn" onclick="selectSlot('${slot.id}', '${slot.time}')">${slot.time}</button>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                slotsContainer.innerHTML = '<p class="text-danger w-100 text-center">Error loading slots</p>';
+            });
+        }
+        
+        function selectSlot(slotId, slotTime) {
+            document.querySelectorAll('.slot-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.background = '';
+                btn.style.color = '';
+            });
+            
+            event.target.classList.add('selected');
+            event.target.style.background = '#4CAF50';
+            event.target.style.color = 'white';
+            
+            document.getElementById('selectedSlotId').value = slotId;
+            document.getElementById('selectedSlotTime').value = slotTime;
+        }
+        
+        function processBooking() {
+            const slotId = document.getElementById('selectedSlotId').value;
+            const reason = document.getElementById('appointmentReason').value;
+            
+            if (!slotId) {
+                alert('Please select a time slot');
+                return;
+            }
+            if (!reason) {
+                alert('Please provide a reason for appointment');
+                return;
+            }
+            
+            // Show loading state
+            const confirmBtn = document.querySelector('#bookingModal .btn-success');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+            
+            const dietitianId = document.getElementById('selectedDietitianId').value;
+            const date = document.getElementById('appointmentDate').value;
+            const slotTime = document.getElementById('selectedSlotTime').value;
+            const symptoms = document.getElementById('appointmentSymptoms').value;
+            
+            const formData = new FormData();
+            formData.append('dietitian_id', dietitianId);
+            formData.append('slot_id', slotId);
+            formData.append('appointment_date', date);
+            formData.append('appointment_time', slotTime);
+            formData.append('reason', reason);
+            formData.append('symptoms', symptoms);
+            formData.append('consultation_fee', CONSULTATION_FEE);
+            formData.append('platform_fee', PLATFORM_FEE);
+            formData.append('total_amount', TOTAL_FEE);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            
+            fetch('{% url "book_appointment" %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    modal.hide();
+                    
+                    // Initialize Razorpay payment
+                    const options = {
+                        key: "{{ razorpay_key_id }}",
+                        amount: data.amount_paise,
+                        currency: "INR",
+                        name: "FitBite",
+                        description: `Consultation with ${data.dietitian_name}`,
+                        order_id: data.razorpay_order_id,
+                        handler: function(response) {
+                            verifyPayment(data.appointment_id, response);
+                        },
+                        prefill: {
+                            name: "{{ user.name }}",
+                            email: "{{ user.email }}",
+                            contact: "{{ user.phone }}"
+                        },
+                        theme: {
+                            color: "#00b140"
+                        },
+                        modal: {
+                            ondismiss: function() {
+                                console.log("Payment modal closed");
+                                alert('Payment was cancelled. Your appointment is not confirmed.');
+                            }
+                        }
+                    };
+                    
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                    
+                } else {
+                    alert(data.error || 'Error booking appointment');
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error booking appointment');
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            });
+        }
+        
+        function verifyPayment(appointmentId, paymentResponse) {
+            const formData = new FormData();
+            formData.append('appointment_id', appointmentId);
+            formData.append('razorpay_order_id', paymentResponse.razorpay_order_id);
+            formData.append('razorpay_payment_id', paymentResponse.razorpay_payment_id);
+            formData.append('razorpay_signature', paymentResponse.razorpay_signature);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            
+            fetch('{% url "verify_appointment_payment" %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '{% url "my_appointments" %}';
+                } else {
+                    alert('Payment verification failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error verifying payment. Please contact support.');
+            });
+        }
+        
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+        
+        // Initialize
+        initDates();
+    </script>
+</body>
+</html>

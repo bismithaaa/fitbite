@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <title>FitBite - Healthy Meals & Nutrition</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="FitBite - Your partner in healthy living with nutritious meals, diet plans, and wellness tips" name="description">
+
+    <!-- Favicon -->
+    <link href="{% static 'img/favicon.ico' %}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FF6B6B;
+            --dark-color: #2C3E50;
+            --light-color: #F8F9FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            padding-top: 80px;
+            background: var(--light-color);
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 9999;
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            text-decoration: none;
+        }
+
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary-color), #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            display: block;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Login Button */
+        .login-btn {
+            background: var(--primary-color);
+            color: white !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .login-btn:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .login-btn::after {
+            display: none;
+        }
+
+        /* Sign Up Button */
+        .signup-btn {
+            background: var(--primary-color);
+            color: white !important;
+            padding: 0.5rem 1.5rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .signup-btn:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .signup-btn::after {
+            display: none;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section with Slideshow */
+        .hero-section {
+            position: relative;
+            height: calc(100vh - 80px);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .hero-slider {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 100%);
+            z-index: 1;
+        }
+
+        .slide .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-content .btn {
+            animation: fadeInUp 1s ease 0.4s both;
+            margin: 0 10px;
+        }
+
+        /* Slider Controls */
+        .slider-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-control:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-control.prev {
+            left: 30px;
+        }
+
+        .slider-control.next {
+            right: 30px;
+        }
+
+        /* Slider Dots */
+        .slider-dots {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot:hover {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.3);
+        }
+
+        /* Scroll Down Indicator */
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .scroll-down a {
+            text-decoration: none;
+        }
+
+        .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid white;
+            border-radius: 20px;
+            position: relative;
+            margin: 0 auto 10px;
+        }
+
+        .wheel {
+            width: 4px;
+            height: 10px;
+            background: white;
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollWheel 2s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        }
+
+        .arrow span {
+            display: block;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid white;
+            border-right: 2px solid white;
+            transform: rotate(45deg);
+            margin: -5px auto;
+            animation: scrollArrow 2s infinite;
+        }
+
+        .arrow span:nth-child(2) { animation-delay: -0.2s; }
+        .arrow span:nth-child(3) { animation-delay: -0.4s; }
+
+        @keyframes scrollArrow {
+            0% { opacity: 0; transform: rotate(45deg) translate(-5px, -5px); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: rotate(45deg) translate(5px, 5px); }
+        }
+
+        /* Meal Plan Cards */
+        .plan-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .plan-header {
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .bg-gradient-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-gradient-2 {
+            background: linear-gradient(135deg, #FF6B6B 0%, var(--primary-color) 100%);
+        }
+
+        .bg-gradient-3 {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2e7d32 100%);
+        }
+
+        .plan-header h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .plan-features {
+            padding: 2rem;
+        }
+
+        .plan-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .plan-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features li i {
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+
+        .plan-footer {
+            padding: 0 2rem 2rem;
+            text-align: center;
+        }
+
+        .btn-plan {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            width: 100%;
+        }
+
+        .btn-plan:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-success {
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-outline-success:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .plan-card.popular {
+            transform: scale(1.05);
+            border: 2px solid var(--primary-color);
+            z-index: 2;
+        }
+
+        .plan-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FF6B6B, var(--primary-color));
+            color: white;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 3;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            white-space: nowrap;
+        }
+
+        /* Product Cards */
+        .product-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            background: white;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .view-detail-btn {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-detail-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Product Modal Styles */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), #2e7d32);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+        .modal-header .btn-close {
+            background-color: white;
+            opacity: 0.8;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .product-detail-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .nutrition-facts {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 1rem;
+        }
+
+        .nutrition-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nutrition-item:last-child {
+            border-bottom: none;
+        }
+
+        .nutrition-label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .nutrition-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .product-stock {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--primary-color);
+            border-radius: 30px;
+            background: transparent;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer h5 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Login Prompt in Modal */
+        .login-prompt {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .login-prompt p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .login-prompt .btn-login {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .login-prompt .btn-login:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 1rem 0;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                flex-direction: column;
+                gap: 0;
+                align-items: stretch;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-item {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 1rem 20px;
+                text-align: center;
+            }
+
+            .nav-link::after {
+                display: none;
+            }
+
+            .nav-link:hover {
+                background: #f8f9fa;
+            }
+
+            .login-btn,
+            .signup-btn {
+                text-align: center;
+                margin: 10px 20px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .slider-control {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .slider-control.prev {
+                left: 15px;
+            }
+
+            .slider-control.next {
+                right: 15px;
+            }
+
+            .slider-dots {
+                bottom: 80px;
+            }
+
+            .hero-content .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                margin: 5px;
+            }
+
+            .plan-card.popular {
+                transform: scale(1);
+            }
+
+            .plan-card.popular:hover {
+                transform: translateY(-10px);
+            }
+
+            .popular-badge {
+                font-size: 12px;
+                padding: 5px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .slider-control {
+                display: none;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-content .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .navbar-brand h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
+    </script>
+    {% endif %}
+
+    <!-- Navbar Start -->
+    <nav class="navbar">
+        <div class="container">
+            <!-- Logo -->
+            <a href="/" class="navbar-brand">
+                <h1>FitBite</h1>
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Navigation Menu -->
+            <ul class="nav-menu" id="navMenu">
+                <!-- Main Navigation (Always Visible) -->
+                <li class="nav-item"><a href="#home" class="nav-link active">Home</a></li>
+                <li class="nav-item"><a href="{% url 'opensearch' %}" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="#plans" class="nav-link">Meal Plans</a></li>
+                <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                
+                <!-- Login Button (Always Visible) -->
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link login-btn">Login</a>
+                </li>
+                
+                <!-- Sign Up Button (Always Visible) -->
+                <li class="nav-item">
+                    <a href="{% url 'register' %}" class="nav-link signup-btn">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Hero Section with Slideshow -->
+    <section class="hero-section" id="home">
+        <div class="hero-slider">
+            <!-- Slide 1 -->
+            <div class="slide active" style="background-image: url('{% static 'img/h1.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content" data-aos="fade-up">
+                        <span class="badge bg-success mb-3">Welcome to FitBite</span>
+                        <h1 class="display-3 fw-bold" style="color: white;">Fresh & Healthy<br>Meals Delivered Daily</h1>
+                        <p class="lead">Discover delicious, nutritious meals crafted by experts to support your fitness journey</p>
+                        <div class="btn-group">
+                            <a href="#products" class="btn btn-success btn-lg px-5 py-3 rounded-pill pulse-animation">
+                                <i class="fas fa-leaf me-2"></i> Shop Now
+                            </a>
+                            <a href="#plans" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                                <i class="fas fa-play-circle me-2"></i> Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 2 -->
+            <div class="slide" style="background-image: url('{% static 'img/h2.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content" data-aos="fade-up">
+                        <span class="badge bg-success mb-3">Premium Quality</span>
+                        <h1 class="display-3 fw-bold" style="color: white;">Organic & Natural<br>Ingredients Only</h1>
+                        <p class="lead">100% organic ingredients sourced from local farms for maximum freshness</p>
+                        <div class="btn-group">
+                            <a href="#products" class="btn btn-success btn-lg px-5 py-3 rounded-pill pulse-animation">
+                                <i class="fas fa-leaf me-2"></i> Shop Now
+                            </a>
+                            <a href="#about" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                                <i class="fas fa-info-circle me-2"></i> About Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 3 -->
+            <div class="slide" style="background-image: url('{% static 'img/h3.jpeg' %}')">
+                <div class="slide-overlay"></div>
+                <div class="container">
+                    <div class="hero-content" data-aos="fade-up">
+                        <span class="badge bg-success mb-3">Fitness Focused</span>
+                        <h1 class="display-3 fw-bold" style="color: white;">Meals Designed For<br>Your Fitness Goals</h1>
+                        <p class="lead">Whether you want to lose weight, gain muscle, or maintain - we have the perfect plan</p>
+                        <div class="btn-group">
+                            <a href="#plans" class="btn btn-success btn-lg px-5 py-3 rounded-pill pulse-animation">
+                                <i class="fas fa-calendar-alt me-2"></i> View Plans
+                            </a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                                <i class="fas fa-headset me-2"></i> Contact Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slider Controls -->
+        <button class="slider-control prev" onclick="changeSlide(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-control next" onclick="changeSlide(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <!-- Slider Dots -->
+        <div class="slider-dots">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="scroll-down">
+            <a href="#products">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <div class="arrow">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Meal Plans Section -->
+    <section id="plans" class="container py-5">
+        <div class="section-title text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-success mb-3">Choose Your Plan</span>
+            <h2 class="display-5 fw-bold">Select Your Meal Plan</h2>
+            <p class="text-muted">Pick the plan that works best for your schedule</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Single Day Plan -->
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="plan-card h-100">
+                    <div class="plan-header bg-gradient-1">
+                        <i class="fas fa-sun fa-3x mb-3 text-white"></i>
+                        <h3 class="text-white">Single Day</h3>
+                        <p class="text-white-50 mb-0">One time meal</p>
+                    </div>
+                    <div class="plan-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Freshly prepared meals</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Balanced nutrition</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Free delivery</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> No commitment</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Perfect for trial</li>
+                        </ul>
+                    </div>
+                    <div class="plan-footer p-4 pt-0">
+                        <button class="btn-outline-success" onclick="selectPlan('single')">
+                            <i class="fas fa-calendar-day me-2"></i> Choose Single Day
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Plan -->
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="plan-card h-100 position-relative popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="plan-header bg-gradient-2">
+                        <i class="fas fa-calendar-week fa-3x mb-3 text-white"></i>
+                        <h3 class="text-white">Weekly Plan</h3>
+                        <p class="text-white-50 mb-0">7 days subscription</p>
+                    </div>
+                    <div class="plan-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Freshly prepared meals</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Balanced nutrition</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Free delivery</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Personalized meal planning</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Weekly menu variety</li>
+                        </ul>
+                    </div>
+                    <div class="plan-footer p-4 pt-0">
+                        <button class="btn-plan" onclick="selectPlan('weekly')">
+                            <i class="fas fa-calendar-week me-2"></i> Choose Weekly Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Plan -->
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="plan-card h-100">
+                    <div class="plan-header bg-gradient-3">
+                        <i class="fas fa-calendar-alt fa-3x mb-3 text-white"></i>
+                        <h3 class="text-white">Monthly Plan</h3>
+                        <p class="text-white-50 mb-0">30 days subscription</p>
+                    </div>
+                    <div class="plan-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Freshly prepared meals</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Balanced nutrition</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Free delivery</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Personalized meal planning</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Weekly menu variety</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Priority support</li>
+                        </ul>
+                    </div>
+                    <div class="plan-footer p-4 pt-0">
+                        <button class="btn-outline-success" onclick="selectPlan('monthly')">
+                            <i class="fas fa-calendar-alt me-2"></i> Choose Monthly Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="container py-5">
+        <div class="section-title">
+            <h2>Our Products</h2>
+            <p>Fresh, organic, and nutritious options for your healthy lifestyle</p>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+            <button class="filter-btn" onclick="filterProducts('vegetable')">Vegetables</button>
+            <button class="filter-btn" onclick="filterProducts('fruit')">Fruits</button>
+            <button class="filter-btn" onclick="filterProducts('protein')">Proteins</button>
+            <button class="filter-btn" onclick="filterProducts('dairy')">Dairy</button>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4" id="productsGrid">
+            {% if products %}
+                {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6 product-item" data-category="{{ product.category|lower }}">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                            <div class="product-overlay">
+                                <button class="view-detail-btn" onclick="openProductModal({{ product.id }})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <h5 class="card-title">{{ product.product_name|truncatechars:20 }}</h5>
+                            <p class="text-muted small">{{ product.description|truncatechars:40 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-success">${{ product.price }}</span>
+                                <span class="badge bg-success">{{ product.category }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Modal (No Add to Cart button) -->
+                <div class="modal fade" id="productModal{{ product.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ product.product_name }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="{{ product.image.url }}" class="product-detail-image" alt="{{ product.product_name }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="mb-3">{{ product.product_name }}</h3>
+                                        <p class="text-muted mb-3">{{ product.description }}</p>
+                                        
+                                        <div class="mb-3">
+                                            <span class="badge bg-success mb-2">{{ product.category }}</span>
+                                            {% if product.weight %}
+                                            <span class="badge bg-info mb-2 ms-2">{{ product.weight }}g</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="product-price mb-3">${{ product.price }}</div>
+                                        
+                                        <div class="mb-3">
+                                            {% if product.stock_quantity > 10 %}
+                                            <span class="product-stock in-stock">
+                                                <i class="fas fa-check-circle"></i> In Stock ({{ product.stock_quantity }} available)
+                                            </span>
+                                            {% elif product.stock_quantity > 0 %}
+                                            <span class="product-stock low-stock">
+                                                <i class="fas fa-exclamation-circle"></i> Low Stock (Only {{ product.stock_quantity }} left)
+                                            </span>
+                                            {% else %}
+                                            <span class="product-stock out-of-stock">
+                                                <i class="fas fa-times-circle"></i> Out of Stock
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="nutrition-facts">
+                                            <h6 class="mb-3">Nutrition Facts (per 100g)</h6>
+                                            {% if product.calories %}
+                                            <div class="nutrition-item">
+                                                <span class="nutrition-label">Calories</span>
+                                                <span class="nutrition-value">{{ product.calories }} kcal</span>
+                                            </div>
+                                            {% endif %}
+                                            {% if product.protein %}
+                                            <div class="nutrition-item">
+                                                <span class="nutrition-label">Protein</span>
+                                                <span class="nutrition-value">{{ product.protein }}g</span>
+                                            </div>
+                                            {% endif %}
+                                            {% if product.carbs %}
+                                            <div class="nutrition-item">
+                                                <span class="nutrition-label">Carbohydrates</span>
+                                                <span class="nutrition-value">{{ product.carbs }}g</span>
+                                            </div>
+                                            {% endif %}
+                                            {% if product.fat %}
+                                            <div class="nutrition-item">
+                                                <span class="nutrition-label">Fat</span>
+                                                <span class="nutrition-value">{{ product.fat }}g</span>
+                                            </div>
+                                            {% endif %}
+                                            {% if product.fiber %}
+                                            <div class="nutrition-item">
+                                                <span class="nutrition-label">Fiber</span>
+                                                <span class="nutrition-value">{{ product.fiber }}g</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <!-- Login Prompt Instead of Add to Cart -->
+                                        <div class="login-prompt">
+                                            <p><i class="fas fa-lock text-muted"></i> Login to purchase this product</p>
+                                            <a href="{% url 'login' %}" class="btn-login">
+                                                <i class="fas fa-sign-in-alt me-2"></i>Login to Buy
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <h4>No products available</h4>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="mb-4">About FitBite</h2>
+                    <p class="lead">We are committed to providing fresh, organic, and nutritious food to help you achieve your health goals.</p>
+                    <p>Our products are sourced from certified organic farms and delivered fresh to your doorstep. We believe that healthy eating should be delicious and accessible to everyone.</p>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-leaf text-success fa-2x me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">100% Organic</h6>
+                                    <small class="text-muted">Certified products</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-truck text-success fa-2x me-3"></i>
+                                <div>
+                                    <h6 class="mb-0">Free Delivery</h6>
+                                    <small class="text-muted">On orders over $50</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{% static 'img/about.jpg' %}" alt="About FitBite" class="img-fluid rounded-3">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <div class="section-title">
+                <h2>Contact Us</h2>
+                <p>Have questions? We're here to help</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-map-marker-alt text-success fa-3x mb-3"></i>
+                        <h5>Visit Us</h5>
+                        <p class="text-muted">123 Healthy Street,<br>New York, NY 10001</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-phone text-success fa-3x mb-3"></i>
+                        <h5>Call Us</h5>
+                        <p class="text-muted">+1 (555) 123-4567<br>Mon-Fri, 9am-6pm</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-envelope text-success fa-3x mb-3"></i>
+                        <h5>Email Us</h5>
+                        <p class="text-muted">support@FitBite.com<br>info@FitBite.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>FitBite</h5>
+                    <p>Your partner in healthy living. Fresh, organic, and nutritious food delivered to your doorstep.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#plans">Meal Plans</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" onclick="filterProducts('vegetable')">Vegetables</a></li>
+                        <li><a href="#" onclick="filterProducts('fruit')">Fruits</a></li>
+                        <li><a href="#" onclick="filterProducts('protein')">Proteins</a></li>
+                        <li><a href="#" onclick="filterProducts('dairy')">Dairy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#"><i class="fab fa-pinterest fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 FitBite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Slideshow functionality
+        let slideIndex = 1;
+        let slideInterval;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        
+        function showSlide(n) {
+            if (n > slides.length) slideIndex = 1;
+            if (n < 1) slideIndex = slides.length;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[slideIndex - 1].classList.add('active');
+            dots[slideIndex - 1].classList.add('active');
+        }
+        
+        function changeSlide(n) {
+            clearInterval(slideInterval);
+            slideIndex += n;
+            showSlide(slideIndex);
+            startSlideshow();
+        }
+        
+        function currentSlide(n) {
+            clearInterval(slideInterval);
+            slideIndex = n;
+            showSlide(slideIndex);
+            startSlideshow();
+        }
+        
+        function startSlideshow() {
+            slideInterval = setInterval(() => {
+                slideIndex++;
+                showSlide(slideIndex);
+            }, 5000);
+        }
+        
+        // Initialize slideshow
+        document.addEventListener('DOMContentLoaded', function() {
+            showSlide(slideIndex);
+            startSlideshow();
+        });
+        
+        // Pause slideshow on hover
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            heroSection.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+            
+            heroSection.addEventListener('mouseleave', () => {
+                startSlideshow();
+            });
+        }
+
+        // No cart functionality - removed all cart-related functions
+
+        function openProductModal(productId) {
+            const modal = new bootstrap.Modal(document.getElementById(`productModal${productId}`));
+            modal.show();
+        }
+
+        // Removed addToCart, updateCartItem, removeFromCart functions
+
+        function filterProducts(category) {
+            const items = document.querySelectorAll('.product-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(category) || 
+                    (category === 'all' && btn.textContent === 'All')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function selectPlan(planType) {
+            const planNames = {
+                'single': 'Single Day',
+                'weekly': 'Weekly',
+                'monthly': 'Monthly'
+            };
+            alert(`${planNames[planType]} plan selected! Please login to continue.`);
+            // Redirect to login page
+            window.location.href = '{% url "login" %}';
+        }
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+        }
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navMenu && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    const icon = menuToggle?.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.15)';
+                } else {
+                    navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+                }
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Set active nav link based on scroll position
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id') || '';
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

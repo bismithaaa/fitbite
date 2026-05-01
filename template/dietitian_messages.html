@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Messages - Dietitian Dashboard | FitBite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --FitBite-green: #00b140;
+            --FitBite-dark: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 0.8rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 9999;
+        }
+        
+        .navbar .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 70px);
+            background: white;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar-link i {
+            width: 25px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .sidebar-link:hover {
+            background: #f0f0f0;
+            color: var(--FitBite-green);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(0,177,64,0.1), transparent);
+            color: var(--FitBite-green);
+            border-right: 3px solid var(--FitBite-green);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        /* WhatsApp Style Container */
+        .whatsapp-container {
+            display: flex;
+            height: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Contacts Sidebar */
+        .contacts-sidebar {
+            width: 320px;
+            background: #fff;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .contacts-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .contacts-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--FitBite-green);
+        }
+        
+        .contacts-header p {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .contacts-search {
+            padding: 10px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .search-box i {
+            color: #999;
+        }
+        
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            background: transparent;
+            font-size: 14px;
+        }
+        
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .contact-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .contact-item.active {
+            background: #e8f5e9;
+            border-left: 3px solid var(--FitBite-green);
+        }
+        
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--FitBite-green), #2e7d32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .contact-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .contact-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+        
+        .contact-last-msg {
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .contact-badge {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .contact-time {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        
+        .unread-badge {
+            background: var(--FitBite-green);
+            color: white;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 0 5px;
+        }
+        
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #efeae2;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--FitBite-green), #2e7d32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .chat-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .chat-header-info h5 {
+            margin: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .chat-header-info p {
+            margin: 0;
+            font-size: 0.7rem;
+            color: #666;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_a4be512e7195b6b733d9110b408f075d.png');
+            background-repeat: repeat;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 12px;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .message.sent {
+            justify-content: flex-end;
+        }
+        
+        .message.received {
+            justify-content: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 65%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .message.sent .message-bubble {
+            background: #dcf8c6;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.received .message-bubble {
+            background: white;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .message-text {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #303030;
+        }
+        
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 3px;
+            text-align: right;
+        }
+        
+        /* Chat Input - FIXED */
+        .chat-input-area {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            flex-shrink: 0;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: white;
+            border-radius: 25px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+            padding: 5px 0;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+        }
+        
+        .chat-input button {
+            background: transparent;
+            border: none;
+            color: var(--FitBite-green);
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s;
+            padding: 0;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.1);
+        }
+        
+        .send-btn {
+            background: var(--FitBite-green);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .send-btn:hover {
+            background: #2e7d32;
+            transform: scale(1.05);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .no-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .no-chat i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Scrollbar */
+        .contacts-list::-webkit-scrollbar,
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .contacts-list::-webkit-scrollbar-track,
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .contacts-list::-webkit-scrollbar-thumb,
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 1000;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .contacts-sidebar {
+                position: absolute;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                z-index: 20;
+                background: white;
+                transition: left 0.3s ease;
+            }
+            .contacts-sidebar.open {
+                left: 0;
+            }
+            .whatsapp-container {
+                position: relative;
+            }
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a href="{% url 'dietitian_dashboard' %}" class="navbar-brand">
+                <h1>Fit<span style="color: var(--FitBite-green);">Bit</span> Dietitian</h1>
+            </a>
+            <div>
+                <span class="me-3">
+                    <i class="fas fa-user-md"></i> {{ dietitian.name|default:"Dietitian" }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_dashboard' %}" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_appointments' %}" class="sidebar-link">
+                    <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_payment_report' %}" class="sidebar-link">
+                    <i class="fas fa-file-invoice-dollar"></i> Payment Report
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_messages' %}" class="sidebar-link active">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{% url 'dietitian_slots' %}" class="sidebar-link">
+                    <i class="fas fa-clock"></i> Manage Slots
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="whatsapp-container">
+            <!-- Contacts Sidebar -->
+            <div class="contacts-sidebar" id="contactsSidebar">
+                <div class="contacts-header">
+                    <h4><i class="fas fa-comments"></i> Conversations</h4>
+                    <p>{{ conversations|length }} patient{{ conversations|length|pluralize }}</p>
+                </div>
+                <div class="contacts-search">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchContacts" placeholder="Search patients..." onkeyup="searchContacts()">
+                    </div>
+                </div>
+                <div class="contacts-list" id="contactsList">
+                    {% for conv in conversations %}
+                    <div class="contact-item {% if selected_user_id|stringformat:'s' == conv.user.id|stringformat:'s' %}active{% endif %}" 
+                         data-name="{{ conv.user.name|lower }}" 
+                         data-id="{{ conv.user.id }}" 
+                         onclick="selectUser({{ conv.user.id }})">
+                        <div class="contact-avatar">
+                            {% if conv.user.profile_pic %}
+                            <img src="{{ conv.user.profile_pic.url }}" alt="{{ conv.user.name }}">
+                            {% else %}
+                            {{ conv.user.name|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-name">{{ conv.user.name }}</div>
+                            <div class="contact-last-msg">
+                                {% with last_msg=conv.messages|last %}
+                                    {% if last_msg %}
+                                        {{ last_msg.message|truncatechars:35 }}
+                                    {% else %}
+                                        No messages yet
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class="contact-badge">
+                            {% with last_msg=conv.messages|last %}
+                                {% if last_msg %}
+                                <div class="contact-time">{{ last_msg.created_at|date:"h:i A" }}</div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if conv.unread_count > 0 %}
+                            <div class="unread-badge">{{ conv.unread_count }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-user-friends fa-3x mb-2"></i>
+                        <p>No conversations yet</p>
+                        <small>Messages from patients will appear here</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                {% if selected_user_id %}
+                {% for conv in conversations %}
+                    {% if conv.user.id|stringformat:'s' == selected_user_id %}
+                <div class="chat-header">
+                    <div class="chat-header-avatar">
+                        {% if conv.user.profile_pic %}
+                        <img src="{{ conv.user.profile_pic.url }}" alt="{{ conv.user.name }}">
+                        {% else %}
+                        {{ conv.user.name|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="chat-header-info">
+                        <h5>{{ conv.user.name }}</h5>
+                        <p><i class="fas fa-phone-alt"></i> {{ conv.user.phone|default:"No phone" }} | <i class="fas fa-envelope"></i> {{ conv.user.email }}</p>
+                    </div>
+                    <div>
+                        <a href="{% url 'dietitian_appointments' %}?user_id={{ conv.user.id }}" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-calendar-alt"></i> Appointments
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    {% for msg in conv.messages %}
+                    <div class="message {% if msg.is_from_user %}received{% else %}sent{% endif %}" data-message-id="{{ msg.id }}">
+                        <div class="message-bubble">
+                            <div class="message-text">{{ msg.message }}</div>
+                            <div class="message-time">
+                                {{ msg.created_at|date:"h:i A" }}
+                                {% if not msg.is_from_user %}
+                                    <i class="fas fa-check-double"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="chat-input">
+                        <i class="fas fa-smile text-muted"></i>
+                        <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" onkeypress="handleKeyPress(event)">
+                        <button onclick="attachFile()"><i class="fas fa-paperclip"></i></button>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                    {% endif %}
+                {% endfor %}
+                {% else %}
+                <div class="no-chat">
+                    <i class="fas fa-comments"></i>
+                    <h4>Select a conversation</h4>
+                    <p>Choose a patient from the list to start messaging</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUserId = {{ selected_user_id|default:'null' }};
+        let lastMessageId = 0;
+        let autoRefreshInterval;
+        let isSending = false;
+        
+        function selectUser(userId) {
+            window.location.href = `?user_id=${userId}`;
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || !currentUserId || isSending) return;
+            
+            isSending = true;
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
+            
+            fetch('{% url "dietitian_send_message" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `user_id=${currentUserId}&message=${encodeURIComponent(message)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                    addMessageToChat(message, true, data.message_id);
+                    scrollToBottom();
+                    
+                    if (data.message_id > lastMessageId) {
+                        lastMessageId = data.message_id;
+                    }
+                    
+                    updateSidebarLastMessage(currentUserId, message);
+                } else {
+                    alert('Error sending message: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending message');
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                setTimeout(() => { isSending = false; }, 500);
+            });
+        }
+        
+        function addMessageToChat(message, isFromDietitian, messageId) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isFromDietitian ? 'sent' : 'received'}`;
+            if (messageId) {
+                messageDiv.setAttribute('data-message-id', messageId);
+            }
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-text">${escapeHtml(message)}</div>
+                    <div class="message-time">
+                        ${timeStr}
+                        ${isFromDietitian ? '<i class="fas fa-check-double"></i>' : ''}
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        function updateSidebarLastMessage(userId, message) {
+            const contactItems = document.querySelectorAll('.contact-item');
+            for (let item of contactItems) {
+                if (item.dataset.id == userId) {
+                    const lastMsgElement = item.querySelector('.contact-last-msg');
+                    if (lastMsgElement) {
+                        lastMsgElement.textContent = message.substring(0, 35) + (message.length > 35 ? '...' : '');
+                    }
+                    const timeElement = item.querySelector('.contact-time');
+                    if (timeElement) {
+                        const now = new Date();
+                        timeElement.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    }
+                    const parent = item.parentNode;
+                    parent.insertBefore(item, parent.firstChild);
+                    break;
+                }
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        function handleKeyPress(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        function searchContacts() {
+            const input = document.getElementById('searchContacts');
+            const filter = input.value.toLowerCase();
+            const contacts = document.querySelectorAll('.contact-item');
+            
+            contacts.forEach(contact => {
+                const name = contact.dataset.name;
+                if (name && name.includes(filter)) {
+                    contact.style.display = 'flex';
+                } else {
+                    contact.style.display = 'none';
+                }
+            });
+        }
+        
+        function attachFile() {
+            alert('File attachment feature coming soon!');
+        }
+        
+        function checkNewMessages() {
+            if (!currentUserId) return;
+            
+            fetch(`/get-dietitian-new-messages/?user_id=${currentUserId}&last_message_id=${lastMessageId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        addMessageToChat(msg.message, false, msg.id);
+                        if (msg.id > lastMessageId) {
+                            lastMessageId = msg.id;
+                        }
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching messages:', error));
+        }
+        
+        function fetchLatestMessageId() {
+            if (!currentUserId) return;
+            
+            fetch(`/get-latest-message-id/?user_id=${currentUserId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.last_message_id > lastMessageId) {
+                    lastMessageId = data.last_message_id;
+                    checkNewMessages();
+                }
+            })
+            .catch(error => console.error('Error fetching latest message ID:', error));
+        }
+        
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(() => {
+                checkNewMessages();
+            }, 3000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            scrollToBottom();
+            startAutoRefresh();
+            
+            const messageElements = document.querySelectorAll('[data-message-id]');
+            if (messageElements.length > 0) {
+                let maxId = 0;
+                messageElements.forEach(el => {
+                    const id = parseInt(el.dataset.messageId);
+                    if (!isNaN(id) && id > maxId) maxId = id;
+                });
+                if (maxId > 0) lastMessageId = maxId;
+            }
+            
+            fetchLatestMessageId();
+        });
+        
+        // Mobile menu toggle
+        const menuToggle = document.createElement('button');
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        menuToggle.className = 'btn btn-success position-fixed top-0 start-0 m-2 d-md-none';
+        menuToggle.style.zIndex = '1001';
+        menuToggle.style.borderRadius = '50%';
+        menuToggle.style.width = '45px';
+        menuToggle.style.height = '45px';
+        menuToggle.style.top = '70px';
+        menuToggle.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+        document.body.appendChild(menuToggle);
+        
+        // Mobile contacts toggle
+        if (window.innerWidth <= 768) {
+            const toggleContactsBtn = document.createElement('button');
+            toggleContactsBtn.innerHTML = '<i class="fas fa-users"></i>';
+            toggleContactsBtn.className = 'btn btn-success position-fixed rounded-circle d-md-none';
+            toggleContactsBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2);';
+            toggleContactsBtn.onclick = () => document.getElementById('contactsSidebar').classList.toggle('open');
+            document.body.appendChild(toggleContactsBtn);
+        }
+        
+        // Close contacts when selecting a chat on mobile
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    document.getElementById('contactsSidebar').classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

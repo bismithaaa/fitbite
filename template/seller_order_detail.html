@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - FitBite Seller</title>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        /* Add your styles here - similar to seller_orders.css plus additional styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles (same as above) */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 25px 30px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: #4CAF50;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .seller-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+        }
+
+        .seller-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .seller-details p {
+            font-size: 12px;
+            opacity: 0.8;
+            color: #ecf0f1;
+        }
+
+        /* Menu Items */
+        .menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #4CAF50;
+        }
+
+        .menu-item.active {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4CAF50;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 24px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+
+        .header h1 i {
+            color: #4CAF50;
+            margin-right: 10px;
+        }
+
+        .order-status-badge {
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .order-info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .items-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #4CAF50;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 15px 10px;
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .items-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .seller-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .other-seller-badge {
+            background: #6c757d;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .total-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+        .grand-total {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar-header {
+                padding: 0 15px 20px 15px;
+            }
+            
+            .logo h2, .seller-details {
+                display: none;
+            }
+            
+            .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .items-table {
+                font-size: 14px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="bi bi-shop"></i>
+                <h2>FitBite Seller</h2>
+            </div>
+            <div class="seller-info">
+                <div class="seller-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="seller-details">
+                    <h3>{{ seller.company_name }}</h3>
+                    <p>{{ seller.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <ul class="menu">
+            <li>
+                <a href="{% url 'seller_dashboard' %}" class="menu-item">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_products' %}" class="menu-item">
+                    <i class="bi bi-box-seam"></i>
+                    <span>My Products</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'add_product' %}" class="menu-item">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_orders' %}" class="menu-item active">
+                    <i class="bi bi-cart-check"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_feedback' %}" class="menu-item">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Feedback</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_inventory' %}" class="menu-item">
+                    <i class="bi bi-clipboard-data"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_profile' %}" class="menu-item">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'seller_logout' %}" class="menu-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="bi bi-file-text"></i>
+                Order Details
+            </h1>
+            <span class="order-status-badge status-{{ order.order_status }}">
+                {{ order.get_order_status_display }}
+            </span>
+        </div>
+
+        <!-- Order Information -->
+        <div class="order-info-card">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Order ID</span>
+                    <span class="info-value">{{ order.order_id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Order Date</span>
+                    <span class="info-value">{{ order.order_date|date:"d M Y, h:i A" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Payment Status</span>
+                    <span class="info-value">{{ order.get_payment_status_display }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Plan</span>
+                    <span class="info-value">{{ order.get_plan_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="order-info-card">
+            <h3 class="section-title">
+                <i class="bi bi-person"></i>
+                Customer Details
+            </h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name</span>
+                    <span class="info-value">{{ order.full_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">{{ order.phone }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Address</span>
+                    <span class="info-value">{{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.pincode }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your Items -->
+        <div class="items-section">
+            <h3 class="section-title">
+                <i class="bi bi-box"></i>
+                Your Products in this Order
+            </h3>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in seller_items %}
+                    <tr>
+                        <td>
+                            {{ item.product.product_name }}
+                            <span class="seller-badge">Your Product</span>
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.product.price }}</td>
+                        <td>₹{% widthratio item.product.price 1 item.quantity %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Other Items -->
+        {% if other_items %}
+        <div class="items-section">
+            <h3 class="section-title">
+                <i class="bi bi-shop"></i>
+                Other Seller's Products
+            </h3>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Seller</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in other_items %}
+                    <tr>
+                        <td>{{ item.product.product_name }}</td>
+                        <td>
+                            <span class="other-seller-badge">
+                                {{ item.product.seller.company_name }}
+                            </span>
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.product.price }}</td>
+                        <td>₹{% widthratio item.product.price 1 item.quantity %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Order Summary -->
+        <div class="total-section">
+            <h3 class="section-title">
+                <i class="bi bi-calculator"></i>
+                Order Summary
+            </h3>
+            
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span>₹{{ subtotal }}</span>
+            </div>
+            
+            {% if order.total_amount != subtotal %}
+            <div class="total-row" style="color: #4CAF50;">
+                <span>Your Share:</span>
+                <span>₹{{ order.total_amount }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="total-row grand-total">
+                <span>Order Total:</span>
+                <span>₹{{ order.total_amount }}</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'seller_orders' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Orders
+            </a>
+            
+            <select class="btn btn-primary" onchange="updateStatus({{ order.id }}, this.value)" style="padding: 12px 25px;">
+                <option value="">Update Status</option>
+                <option value="confirmed">Confirm Order</option>
+                <option value="prepared">Mark as Prepared</option>
+                <option value="dispatched">Mark as Dispatched</option>
+                <option value="delivered">Mark as Delivered</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(orderId, newStatus) {
+            if (!newStatus) return;
+            
+            if (confirm('Are you sure you want to update this order status?')) {
+                fetch(`/update-order-status/${orderId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `status=${newStatus}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    alert('Error updating status');
+                    console.error(error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
