@@ -883,15 +883,46 @@ def addproducts(request):
             return HttpResponse(f"<script>alert('❌ Error: {str(e)}'); window.history.back();</script>")
             
     return render(request, 'seller-products.html')
-
 def seller_products(request):
-    product_qs = products.objects.all().order_by('-id')
-
-    paginator = Paginator(product_qs, 5) 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request,'view-seller-products.html',{'products':page_obj})
+    # Check if seller is logged in - check both possible session keys
+    if 'seller_id' not in request.session and 'sid' not in request.session:
+        messages.warning(request, 'Please login to view products')
+        return redirect('seller_login')
+    
+    try:
+        # Get seller from session
+        seller_id = None
+        if 'seller_id' in request.session:
+            seller_id = request.session['seller_id']
+        elif 'sid' in request.session:
+            seller_id = request.session['sid']
+        
+        # Get seller object (by ID or email)
+        try:
+            seller = Seller.objects.get(id=seller_id)
+        except (Seller.DoesNotExist, ValueError):
+            seller = Seller.objects.get(email=seller_id)
+        
+        # Filter products by this seller only
+        product_qs = products.objects.filter(seller=seller).order_by('-id')
+        
+        # Pagination
+        paginator = Paginator(product_qs, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context = {
+            'products': page_obj,
+            'seller': seller,
+        }
+        return render(request, 'view-seller-products.html', context)
+        
+    except Seller.DoesNotExist:
+        messages.error(request, 'Seller not found. Please login again.')
+        return redirect('seller_login')
+    except Exception as e:
+        messages.error(request, f'Error loading products: {str(e)}')
+        return redirect('seller_dashboard')
 
 def update_product(request):
     """Update product with all fields"""

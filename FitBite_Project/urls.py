@@ -19,6 +19,7 @@ from django.urls import path
 from FitBite_App.views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from FitBite_App.views import seller_products
 
 
 urlpatterns = [
@@ -49,7 +50,7 @@ urlpatterns = [
     path('remove-from-cart/<int:cart_id>/', remove_from_cart, name='remove_from_cart'),
     path('get-cart-count/', get_cart_count, name='get_cart_count'),
 
-    path('\order/<int:product_id>/', place_order, name='place_order'),
+    path('order/<int:product_id>/', place_order, name='place_order'),
     path('my-orders/', order_history, name='order_history'),
     path('order/<int:order_id>/', order_detail, name='order_detail'),
     path('order/<int:order_id>/track/', order_tracking, name='order_tracking'),
